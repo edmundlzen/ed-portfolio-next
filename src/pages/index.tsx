@@ -76,26 +76,26 @@ const Home: NextPage = () => {
                   </Text>
                 </div>
               </div>
-              <div className="p-3 font-mono text-sm">
-                <div className="font-semibold tracking-normal text-slate-100">
+              <div className="p-3 font-mono text-sm font-semibold tracking-normal">
+                <div>
                   <span className="text-slate-600">1 </span>
                   {"{"}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">2 </span>
                   <pre className="inline">{"  "}</pre>
                   <span className="text-slate-400">&quot;name&quot;:</span>{" "}
                   <span className="text-lime-400">&quot;Edmund&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">3 </span>
                   <pre className="inline">{"  "}</pre>
                   <span className="text-slate-400">&quot;age&quot;:</span>{" "}
                   <span className="text-rose-500">17</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">4 </span>
                   <pre className="inline">{"  "}</pre>
                   <span className="text-slate-400">
@@ -104,7 +104,7 @@ const Home: NextPage = () => {
                   <span className="text-lime-400">&quot;Malaysia&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">5 </span>
                   <pre className="inline">{"  "}</pre>
                   <span className="text-slate-400">
@@ -112,19 +112,19 @@ const Home: NextPage = () => {
                   </span>{" "}
                   <span className="text-slate-300">[</span>
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">6 </span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-orange-500">&quot;HTML&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">7 </span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-blue-500">&quot;CSS&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">8 </span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-yellow-300">
@@ -132,42 +132,46 @@ const Home: NextPage = () => {
                   </span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">9 </span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-blue-400">&quot;TypeScript&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">10</span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-yellow-500">&quot;Python&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">11</span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-sky-300">&quot;React JS&quot;</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">12</span>
                   <pre className="inline">{"    "}</pre>
                   <span className="text-green-600">&quot;Node JS&quot;</span>
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">13</span>
                   <pre className="inline">{"   "}</pre>
                   <span className="text-slate-300">]</span>
                   {","}
                 </div>
-                <div className="font-semibold tracking-normal text-slate-100">
+                <div>
                   <span className="text-slate-600">14</span>
                   <pre className="inline">{"  "}</pre>
                   <span className="text-slate-400">
                     &quot;lookingForWork&quot;:
                   </span>{" "}
                   <span className="text-purple-500">true</span>
+                </div>
+                <div>
+                  <span className="text-slate-600">15</span>
+                  {" }"}
                 </div>
               </div>
             </div>
