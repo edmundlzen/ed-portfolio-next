@@ -3,12 +3,30 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Parallax } from "react-scroll-parallax";
 import ReactTypingEffect from "react-typing-effect";
+import { MouseParallaxChild } from "react-parallax-mouse";
+import { motion, useInView } from "framer-motion";
 
 const Home: NextPage = () => {
   const [title, setTitle] = useState("_");
+  const [hiMotion, setHiMotion] = useState({
+    opacity: 0,
+    rotate: 0,
+    scale: 0,
+  });
+  const hiRef = useRef(null);
+  const hiIsInView = useInView(hiRef);
+  const hiTexts = [
+    "Hi!",
+    "你好！",
+    "Apa khabar?",
+    "வணக்கம்",
+    "こんにちは",
+    "안녕하세요",
+  ];
+  const [hiText, setHiText] = useState(hiTexts[0]);
   const fullTitle = "Edmund's Portfolio";
   useEffect(() => {
     let i = 0;
@@ -29,6 +47,47 @@ const Home: NextPage = () => {
     }, 500);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (hiIsInView) {
+      setTimeout(() => {
+        setHiMotion({
+          opacity: 1,
+          rotate: 0,
+          scale: 1,
+        });
+      }, 150);
+    } else {
+      setHiMotion({
+        opacity: 0,
+        rotate: 0,
+        scale: 0,
+      });
+    }
+  }, [hiIsInView]);
+
+  useEffect(() => {
+    if (!hiIsInView) return;
+    const interval = setInterval(() => {
+      setHiMotion({
+        opacity: 1,
+        rotate: 0,
+        scale: 0,
+      });
+      setTimeout(() => {
+        setHiText(
+          hiTexts[(hiTexts.indexOf(hiText as string) + 1) % hiTexts.length]
+        );
+        setHiMotion({
+          opacity: 1,
+          rotate: 0,
+          scale: 1,
+        });
+      }, 150);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [hiText, hiIsInView]);
+
   return (
     <>
       <Head>
@@ -43,146 +102,225 @@ const Home: NextPage = () => {
             speed={-10}
             className="min-w-screen flex min-h-screen flex-col items-center justify-center text-4xl font-extrabold tracking-tight text-white"
           >
-            <ReactTypingEffect
-              text={["Hi, I'm Edmund"]}
-              typingDelay={1000}
-              eraseDelay={1000 * 1000}
-              speed={100}
-              displayTextRenderer={(text: string, i: number) => {
-                return (
-                  <Text>
-                    {text.split("").map((char: string, i: number) => {
-                      const key = `${i}`;
-                      return <span key={key}>{char}</span>;
-                    })}
-                  </Text>
-                );
-              }}
-            />
-            <div className="mt-8 w-72 rounded-lg border-[1px] border-black border-opacity-50 bg-slate-900 shadow-xl transition-all">
-              <div className="h-8 w-full rounded-t-lg bg-slate-800">
-                <div className="flex h-8 w-6/12 items-center rounded-t-lg border-2 border-slate-900 border-b-black border-opacity-25 bg-slate-900 px-2 font-mono text-sm">
-                  <div className="relative mr-1 h-1/2 w-1/5">
-                    <Image
-                      src={"/images/json.png"}
-                      fill
-                      objectFit="contain"
-                      alt="JSON Logo"
-                      className="invert"
-                    />
+            <MouseParallaxChild factorX={0.2} factorY={0.2}>
+              <ReactTypingEffect
+                text={["Hi, I'm Edmund"]}
+                typingDelay={1000}
+                eraseDelay={1000 * 1000}
+                speed={50}
+                className="flex items-center justify-center"
+                displayTextRenderer={(text: string, i: number) => {
+                  return (
+                    <Text>
+                      {text.split("").map((char: string, i: number) => {
+                        const key = `${i}`;
+                        return <span key={key}>{char}</span>;
+                      })}
+                    </Text>
+                  );
+                }}
+              />
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  scale: 0,
+                  rotate: 180,
+                  translateY: 500,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                  translateY: 0,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  delay: 1.8,
+                }}
+              >
+                <div className="mt-8 w-72 rounded-lg border-[1px] border-black border-opacity-50 bg-slate-900 shadow-xl transition-all">
+                  <div className="h-8 w-full rounded-t-lg bg-slate-800">
+                    <div className="flex h-8 w-6/12 items-center rounded-t-lg border-2 border-slate-900 border-b-black border-opacity-25 bg-slate-900 px-2 font-mono text-sm">
+                      <div className="relative mr-1 h-1/2 w-1/5">
+                        <Image
+                          src={"/images/json.png"}
+                          fill
+                          objectFit="contain"
+                          alt="JSON Logo"
+                          className="invert"
+                        />
+                      </div>
+                      <Text className="font-semibold tracking-normal">
+                        info.json
+                      </Text>
+                    </div>
                   </div>
-                  <Text className="font-semibold tracking-normal">
-                    info.json
-                  </Text>
+                  <div className="p-3 font-mono text-sm font-semibold tracking-normal">
+                    <div>
+                      <span className="text-slate-600">1 </span>
+                      {"{"}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">2 </span>
+                      <pre className="inline">{"  "}</pre>
+                      <span className="text-slate-400">
+                        &quot;name&quot;:
+                      </span>{" "}
+                      <span className="text-lime-400">&quot;Edmund&quot;</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">3 </span>
+                      <pre className="inline">{"  "}</pre>
+                      <span className="text-slate-400">
+                        &quot;age&quot;:
+                      </span>{" "}
+                      <span className="text-rose-500">17</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">4 </span>
+                      <pre className="inline">{"  "}</pre>
+                      <span className="text-slate-400">
+                        &quot;location&quot;:
+                      </span>{" "}
+                      <span className="text-lime-400">
+                        &quot;Malaysia&quot;
+                      </span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">5 </span>
+                      <pre className="inline">{"  "}</pre>
+                      <span className="text-slate-400">
+                        &quot;skills&quot;:
+                      </span>{" "}
+                      <span className="text-slate-300">[</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">6 </span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-orange-500">&quot;HTML&quot;</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">7 </span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-blue-500">&quot;CSS&quot;</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">8 </span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-yellow-300">
+                        &quot;JavaScript&quot;
+                      </span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">9 </span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-blue-400">
+                        &quot;TypeScript&quot;
+                      </span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">10</span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-yellow-500">
+                        &quot;Python&quot;
+                      </span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">11</span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-sky-300">&quot;React JS&quot;</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">12</span>
+                      <pre className="inline">{"    "}</pre>
+                      <span className="text-green-600">
+                        &quot;Node JS&quot;
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">13</span>
+                      <pre className="inline">{"   "}</pre>
+                      <span className="text-slate-300">]</span>
+                      {","}
+                    </div>
+                    <div>
+                      <span className="text-slate-600">14</span>
+                      <pre className="inline">{"  "}</pre>
+                      <span className="text-slate-400">
+                        &quot;lookingForWork&quot;:
+                      </span>{" "}
+                      <span className="text-purple-500">true</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">15</span>
+                      {" }"}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="p-3 font-mono text-sm font-semibold tracking-normal">
-                <div>
-                  <span className="text-slate-600">1 </span>
-                  {"{"}
-                </div>
-                <div>
-                  <span className="text-slate-600">2 </span>
-                  <pre className="inline">{"  "}</pre>
-                  <span className="text-slate-400">&quot;name&quot;:</span>{" "}
-                  <span className="text-lime-400">&quot;Edmund&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">3 </span>
-                  <pre className="inline">{"  "}</pre>
-                  <span className="text-slate-400">&quot;age&quot;:</span>{" "}
-                  <span className="text-rose-500">17</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">4 </span>
-                  <pre className="inline">{"  "}</pre>
-                  <span className="text-slate-400">
-                    &quot;location&quot;:
-                  </span>{" "}
-                  <span className="text-lime-400">&quot;Malaysia&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">5 </span>
-                  <pre className="inline">{"  "}</pre>
-                  <span className="text-slate-400">
-                    &quot;skills&quot;:
-                  </span>{" "}
-                  <span className="text-slate-300">[</span>
-                </div>
-                <div>
-                  <span className="text-slate-600">6 </span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-orange-500">&quot;HTML&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">7 </span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-blue-500">&quot;CSS&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">8 </span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-yellow-300">
-                    &quot;JavaScript&quot;
-                  </span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">9 </span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-blue-400">&quot;TypeScript&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">10</span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-yellow-500">&quot;Python&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">11</span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-sky-300">&quot;React JS&quot;</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">12</span>
-                  <pre className="inline">{"    "}</pre>
-                  <span className="text-green-600">&quot;Node JS&quot;</span>
-                </div>
-                <div>
-                  <span className="text-slate-600">13</span>
-                  <pre className="inline">{"   "}</pre>
-                  <span className="text-slate-300">]</span>
-                  {","}
-                </div>
-                <div>
-                  <span className="text-slate-600">14</span>
-                  <pre className="inline">{"  "}</pre>
-                  <span className="text-slate-400">
-                    &quot;lookingForWork&quot;:
-                  </span>{" "}
-                  <span className="text-purple-500">true</span>
-                </div>
-                <div>
-                  <span className="text-slate-600">15</span>
-                  {" }"}
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            </MouseParallaxChild>
           </Parallax>
           <Parallax
-            speed={40}
-            className="flex min-h-screen items-center justify-center"
+            speed={60}
+            className="flex min-h-screen flex-col items-center justify-center gap-y-5 px-12 text-center text-white "
           >
-            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-              Test
-            </h1>
+            <motion.div
+              initial={{ opacity: 0, scale: 0, rotate: 180 }}
+              animate={{
+                opacity: hiMotion.opacity,
+                scale: hiMotion.scale,
+                rotate: hiMotion.rotate,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+              }}
+            >
+              <h1
+                className="text-4xl font-extrabold tracking-tighter"
+                ref={hiRef}
+              >
+                {hiText}
+              </h1>
+            </motion.div>
+            <motion.div
+              initial={{
+                opacity: 0,
+                scale: 0,
+                rotate: 90,
+              }}
+              whileInView={{
+                opacity: 1,
+                scale: 1,
+                rotate: 0,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                delay: 0.5,
+              }}
+            >
+              <Text className="text-lg tracking-tight">
+                My name is Edmund and I&apos;m a{" "}
+                <span className="font-mono font-semibold underline">
+                  software developer
+                </span>{" "}
+                from Johor, Malaysia
+              </Text>
+            </motion.div>
           </Parallax>
         </div>
       </main>
