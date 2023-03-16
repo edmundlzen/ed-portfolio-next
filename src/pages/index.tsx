@@ -8,7 +8,6 @@ import { Parallax } from "react-scroll-parallax";
 import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
-import useScrollSnap from "react-use-scroll-snap";
 import { ProjectCard } from "~/components";
 
 const Home: NextPage = () => {
@@ -30,8 +29,6 @@ const Home: NextPage = () => {
   ];
   const [hiText, setHiText] = useState(hiTexts[0]);
   const fullTitle = "Edmund's Portfolio";
-  const scrollRef = useRef(null);
-  useScrollSnap({ ref: scrollRef, duration: 50, delay: 20 });
 
   useEffect(() => {
     let i = 0;
@@ -62,17 +59,11 @@ const Home: NextPage = () => {
           scale: 1,
         });
       }, 150);
-    } else {
-      setHiMotion({
-        opacity: 0,
-        rotate: 0,
-        scale: 0,
-      });
     }
   }, [hiIsInView]);
 
   useEffect(() => {
-    if (!hiIsInView) return;
+    // if (!hiIsInView) return;
     const interval = setInterval(() => {
       setHiMotion({
         opacity: 1,
@@ -89,7 +80,7 @@ const Home: NextPage = () => {
           scale: 1,
         });
       }, 150);
-    }, 2000);
+    }, 1500);
     return () => clearInterval(interval);
   }, [hiText, hiIsInView]);
 
@@ -102,10 +93,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-full flex-col items-start scroll-smooth bg-gradient-to-b from-[#040036] to-[#002022]">
         <div className="min-w-screen absolute top-0 left-0 h-full min-h-screen w-full bg-[url(/images/grid.svg)] bg-repeat" />
-        <div
-          ref={scrollRef}
-          className="flex h-full w-full flex-col items-center justify-start"
-        >
+        <div className="flex h-full w-full flex-col items-center justify-start">
           <Parallax
             speed={-10}
             className="flex h-screen w-screen shrink-0 snap-start flex-col items-center justify-center text-4xl font-extrabold tracking-tight text-white"
@@ -319,8 +307,9 @@ const Home: NextPage = () => {
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
-                  delay: 0.5,
+                  delay: 0.1,
                 }}
+                viewport={{ once: true }}
               >
                 <Text className="text-lg tracking-tight">
                   My name is Edmund and I&apos;m a passionate{" "}
@@ -376,8 +365,8 @@ const Home: NextPage = () => {
             </MouseParallaxChild>
           </Parallax>
           <Parallax
-            speed={-5}
-            className="mt-36 flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
+            speed={10}
+            className="flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
           >
             <MouseParallaxChild factorX={0.2} factorY={0.2}>
               <motion.div
@@ -391,9 +380,11 @@ const Home: NextPage = () => {
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
+                  delay: 0.1,
                 }}
+                viewport={{ once: true }}
               >
-                <h1 className="text-4xl font-extrabold tracking-tighter">
+                <h1 className="mt-10 text-4xl font-extrabold tracking-tighter">
                   Projects
                 </h1>
               </motion.div>
@@ -402,7 +393,8 @@ const Home: NextPage = () => {
               <ProjectCard
                 title="Scan & Go"
                 description="A mobile application that allows users to scan and pay for their groceries in a supermarket."
-                image="https://farhan-helmy.github.io/assets/MYBengkel.fcdac1de.png"
+                image="https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/scan_and_go.png?alt=media&token=29a3323b-a109-4a04-860a-c4249274b67a"
+                className="bg-center"
                 github={null}
               />
             </div>
