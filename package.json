@@ -19,6 +19,7 @@
     "react-parallax-mouse": "^2.0.1",
     "react-scroll-parallax": "^3.3.2",
     "react-typing-effect": "^2.0.5",
+    "react-use-scroll-snap": "^0.0.4",
     "zod": "^3.20.6"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ import { Parallax } from "react-scroll-parallax";
 import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
+import useScrollSnap from "react-use-scroll-snap";
 
 const Home: NextPage = () => {
   const [title, setTitle] = useState("_");
@@ -28,6 +29,9 @@ const Home: NextPage = () => {
   ];
   const [hiText, setHiText] = useState(hiTexts[0]);
   const fullTitle = "Edmund's Portfolio";
+  const scrollRef = useRef(null);
+  useScrollSnap({ ref: scrollRef, duration: 50, delay: 20 });
+
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
@@ -97,7 +101,10 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-full flex-col items-start scroll-smooth bg-gradient-to-b from-[#040036] to-[#002022]">
         <div className="min-w-screen absolute top-0 left-0 h-full min-h-screen w-full bg-[url(/images/grid.svg)] bg-repeat" />
-        <div className="flex h-full w-full flex-col items-center justify-start">
+        <div
+          ref={scrollRef}
+          className="flex h-full w-full flex-col items-center justify-start"
+        >
           <Parallax
             speed={-10}
             className="flex h-screen w-screen shrink-0 snap-start flex-col items-center justify-center text-4xl font-extrabold tracking-tight text-white"
