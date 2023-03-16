@@ -87,8 +87,8 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{title}</title>
-        <meta name="description" content="Edmund's resume" />
+        <title>edmundlzen</title>
+        <meta name="description" content="Edmund's portfolio" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-full flex-col items-start scroll-smooth bg-gradient-to-b from-[#040036] to-[#002022]">
