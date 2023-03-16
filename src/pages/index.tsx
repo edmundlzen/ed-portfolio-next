@@ -9,6 +9,7 @@ import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
 import useScrollSnap from "react-use-scroll-snap";
+import { ProjectCard } from "~/components";
 
 const Home: NextPage = () => {
   const [title, setTitle] = useState("_");
@@ -359,29 +360,52 @@ const Home: NextPage = () => {
                   </Tooltip>
                 </div>
                 <div className="flex items-center justify-center">
-                  <Tooltip label="Download my resume">
-                    <button
-                      className="mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-125"
-                      onClick={() => {
-                        window.open(
-                          "https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/Edmund's%20resume.pdf?alt=media&token=963b03fb-e4fa-4761-8f95-634f8b2b7b66"
-                        );
-                      }}
-                    >
-                      <span>Download my resume</span>
-                    </button>
-                  </Tooltip>
+                  <button
+                    className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-125"
+                    onClick={() => {
+                      window.open(
+                        "https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/Edmund's%20resume.pdf?alt=media&token=963b03fb-e4fa-4761-8f95-634f8b2b7b66"
+                      );
+                    }}
+                  >
+                    <div className="absolute -z-10 h-8 w-32 animate-ping rounded-2xl bg-blue-500 opacity-90" />
+                    <span className="select-none">Download my resume</span>
+                  </button>
                 </div>
               </motion.div>
             </MouseParallaxChild>
           </Parallax>
           <Parallax
-            speed={-20}
-            className="flex min-h-screen snap-end flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
+            speed={-5}
+            className="mt-36 flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
           >
             <MouseParallaxChild factorX={0.2} factorY={0.2}>
-              <div>Test</div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0, rotate: 180 }}
+                whileInView={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                }}
+              >
+                <h1 className="text-4xl font-extrabold tracking-tighter">
+                  Projects
+                </h1>
+              </motion.div>
             </MouseParallaxChild>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <ProjectCard
+                title="Scan & Go"
+                description="A mobile application that allows users to scan and pay for their groceries in a supermarket."
+                image="https://farhan-helmy.github.io/assets/MYBengkel.fcdac1de.png"
+                github={null}
+              />
+            </div>
           </Parallax>
         </div>
       </main>
