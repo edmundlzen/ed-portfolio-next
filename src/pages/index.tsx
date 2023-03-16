@@ -388,16 +388,38 @@ const Home: NextPage = () => {
                   Projects
                 </h1>
               </motion.div>
+              <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    scale: 0,
+                    rotate: 180,
+                    translateX: -100,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: 0,
+                    translateX: 0,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                    delay: 0.1,
+                  }}
+                  viewport={{ once: true }}
+                >
+                  <ProjectCard
+                    title="Scan & Go"
+                    description="A mobile application that allows users to scan and pay for their groceries in a supermarket."
+                    image="https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/scan_and_go.png?alt=media&token=29a3323b-a109-4a04-860a-c4249274b67a"
+                    className="bg-center"
+                    github={null}
+                  />
+                </motion.div>
+              </div>
             </MouseParallaxChild>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <ProjectCard
-                title="Scan & Go"
-                description="A mobile application that allows users to scan and pay for their groceries in a supermarket."
-                image="https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/scan_and_go.png?alt=media&token=29a3323b-a109-4a04-860a-c4249274b67a"
-                className="bg-center"
-                github={null}
-              />
-            </div>
           </Parallax>
         </div>
       </main>
