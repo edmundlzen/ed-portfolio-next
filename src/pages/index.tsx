@@ -28,6 +28,10 @@ const Home: NextPage = () => {
     "안녕하세요",
   ];
   const [hiText, setHiText] = useState(hiTexts[0]);
+  const [imageModalHidden, setImageModalHidden] = useState(true);
+  const [imageModalSrc, setImageModalSrc] = useState("");
+  const [imageModalDescription, setImageModalDescription] = useState("");
+  const [imageModalOpacity, setImageModalOpacity] = useState(0);
   const fullTitle = "Edmund's Portfolio";
 
   useEffect(() => {
@@ -84,6 +88,20 @@ const Home: NextPage = () => {
     return () => clearInterval(interval);
   }, [hiText, hiIsInView]);
 
+  const setImageModalVisible = () => {
+    setImageModalHidden(false);
+    setTimeout(() => {
+      setImageModalOpacity(1);
+    }, 0);
+  };
+
+  const setImageModalInvisible = () => {
+    setImageModalOpacity(0);
+    setTimeout(() => {
+      setImageModalHidden(true);
+    }, 300);
+  };
+
   return (
     <>
       <Head>
@@ -93,6 +111,29 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-full flex-col items-start scroll-smooth bg-gradient-to-b from-[#040036] to-[#002022]">
         <div className="min-w-screen absolute top-0 left-0 h-full min-h-screen w-full bg-[url(/images/grid.svg)] bg-repeat" />
+        <div
+          className={
+            "fixed top-0 left-0 z-10 flex h-full w-full flex-col items-center justify-center bg-black bg-opacity-80 p-3 backdrop-blur-sm transition-opacity" +
+            (imageModalHidden ? " hidden" : "")
+          }
+          style={{ opacity: imageModalOpacity }}
+          onClick={() => setImageModalInvisible()}
+        >
+          <img
+            src={imageModalSrc}
+            className="max-h-full max-w-full rounded-lg"
+          />
+          <div className="mt-4 flex flex-col items-center justify-center">
+            <Text className="text-md text-white">{imageModalDescription}</Text>
+          </div>
+          <a
+            className="text-md mt-2 font-semibold text-sky-400 underline"
+            href={imageModalSrc}
+            download
+          >
+            Download image
+          </a>
+        </div>
         <div className="flex h-full w-full flex-col items-center justify-start">
           <Parallax
             speed={-10}
@@ -388,96 +429,190 @@ const Home: NextPage = () => {
                   Projects
                 </h1>
               </motion.div>
-              <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    scale: 0,
-                    rotate: 180,
-                    translateX: -100,
+              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <ProjectCard
+                  title="Scan & Go"
+                  status={
+                    <span className="font-bold text-green-400">Live</span>
+                  }
+                  carouselItems={[
+                    {
+                      src: "/projects/scan_and_go/scanner_demo.gif",
+                      alt: "QR Code Scanner Demo",
+                    },
+                    {
+                      src: "/projects/scan_and_go/auto_locate_demo.gif",
+                      alt: "Auto Locate closest store Demo",
+                    },
+                    {
+                      src: "/projects/scan_and_go/fast_checkout_demo.gif",
+                      alt: "Fast checkout via QR Code Demo",
+                    },
+                    {
+                      src: "/projects/scan_and_go/design.png",
+                      alt: "UI Design created in Lunacy",
+                    },
+                  ]}
+                  description={
+                    <>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; A cross-platform mobile app built using{" "}
+                        <span className="font-bold text-blue-400">
+                          react-native
+                        </span>{" "}
+                        &
+                        <span className="font-bold text-orange-500">
+                          {" "}
+                          firebase
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Allows shoppers to use their phones to scan items
+                        to <span className="text-green-400">check prices </span>
+                        and add them to a shopping cart for{" "}
+                        <span className="text-yellow-300">
+                          fast checkouts
+                        </span>{" "}
+                        by using QR Codes.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Freelance project
+                      </p>
+                    </>
+                  }
+                  onImageClick={(src: string, description: string) => {
+                    setImageModalSrc(src);
+                    setImageModalDescription(description);
+                    setImageModalVisible();
                   }}
-                  whileInView={{
-                    opacity: 1,
-                    scale: 1,
-                    rotate: 0,
-                    translateX: 0,
+                />
+                <ProjectCard
+                  title="Pinkfredor Music Player"
+                  status={
+                    <span className="font-bold text-red-500">Deprecated</span>
+                  }
+                  carouselItems={[
+                    {
+                      src: "/projects/pinkfredor_music_player/home.png",
+                      alt: "Home page",
+                    },
+                    {
+                      src: "/projects/pinkfredor_music_player/music_player.png",
+                      alt: "Music player interface",
+                    },
+                  ]}
+                  description={
+                    <>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; A web app built using{" "}
+                        <span className="font-bold text-sky-500">react</span> &{" "}
+                        <span className="font-bold text-orange-500">
+                          firebase
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Allows users to stream music from their{" "}
+                        <span className="text-yellow-300">Google Drive</span>{" "}
+                        account.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Collaboration project with developers{" "}
+                        <a
+                          href="https://github.com/benjaminthio"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-400"
+                        >
+                          @BenjaminThio
+                        </a>{" "}
+                        &{" "}
+                        <a
+                          href="https://github.com/Tiffceet"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-400"
+                        >
+                          @Tiffceet
+                        </a>{" "}
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; <span className="text-red-500">Deprecated</span>{" "}
+                        due to YouTube Music introducing self music file
+                        uploading.
+                      </p>
+                    </>
+                  }
+                  onImageClick={(src: string, description: string) => {
+                    setImageModalSrc(src);
+                    setImageModalDescription(description);
+                    setImageModalVisible();
                   }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                    delay: 0.1,
+                />
+                {/* <ProjectCard
+                  title="Healthcare System"
+                  status={
+                    <span className="font-bold text-green-500">Live</span>
+                  }
+                  carouselItems={[
+                    {
+                      src: "/projects/pinkfredor_music_player/home.png",
+                      alt: "Home",
+                    },
+                    {
+                      src: "/projects/pinkfredor_music_player/music_player.png",
+                      alt: "Music Player",
+                    },
+                  ]}
+                  description={
+                    <>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; A web app built using{" "}
+                        <span className="font-bold text-sky-500">react</span> &{" "}
+                        <span className="font-bold text-orange-500">
+                          firebase
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Allows users to stream music from their{" "}
+                        <span className="text-yellow-300">Google Drive</span>{" "}
+                        account.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Collaboration project with developers{" "}
+                        <a
+                          href="https://github.com/benjaminthio"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-400"
+                        >
+                          @BenjaminThio
+                        </a>{" "}
+                        &{" "}
+                        <a
+                          href="https://github.com/Tiffceet"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-400"
+                        >
+                          @Tiffceet
+                        </a>{" "}
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; <span className="text-red-500">Deprecated</span>{" "}
+                        due to YouTube Music introducing self music file
+                        uploading.
+                      </p>
+                    </>
+                  }
+                  onImageClick={(src: string, description: string) => {
+                    setImageModalSrc(src);
+                    setImageModalDescription(description);
+                    setImageModalVisible();
                   }}
-                  viewport={{ once: true }}
-                >
-                  <ProjectCard
-                    title="Scan & Go"
-                    carouselItems={[
-                      [
-                        <div key="1">
-                          <Image
-                            src="/projects/scan_and_go/scanner_demo.gif"
-                            className="rounded-t-lg"
-                            height={648}
-                            width={1152}
-                            alt="Scanner Demo"
-                          />
-                        </div>,
-                      ],
-                      [
-                        <div key="2">
-                          <Image
-                            src="/projects/scan_and_go/auto_locate_demo.gif"
-                            className="rounded-t-lg"
-                            height={648}
-                            width={1152}
-                            alt="Auto Locate Demo"
-                          />
-                        </div>,
-                      ],
-                      [
-                        <div key="3">
-                          <Image
-                            src="/projects/scan_and_go/fast_checkout_demo.gif"
-                            className="rounded-t-lg"
-                            height={648}
-                            width={1152}
-                            alt="Fast Checkout Demo"
-                          />
-                        </div>,
-                      ],
-                    ]}
-                    description={
-                      <>
-                        <p className="mt-1 text-sm text-gray-300">
-                          &gt; A cross-platform mobile app built using{" "}
-                          <span className="font-bold text-blue-400">
-                            react-native
-                          </span>{" "}
-                          &
-                          <span className="font-bold text-orange-500">
-                            {" "}
-                            firebase
-                          </span>
-                          .
-                        </p>
-                        <p className="mt-1 text-sm text-gray-300">
-                          &gt; Allows shoppers to use their phones to scan items
-                          to{" "}
-                          <span className="text-green-400">check prices </span>
-                          and add them to a shopping cart for{" "}
-                          <span className="text-yellow-300">
-                            fast checkouts
-                          </span>{" "}
-                          by using QR Codes.
-                        </p>
-                        <p className="mt-1 text-sm text-gray-300">
-                          &gt; Freelance project
-                        </p>
-                      </>
-                    }
-                  />
-                </motion.div>
+                /> */}
               </div>
             </MouseParallaxChild>
           </Parallax>
