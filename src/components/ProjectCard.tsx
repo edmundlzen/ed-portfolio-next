@@ -25,7 +25,7 @@ const ProjectCard = (props: projectCardProps) => {
         </Carousel>
       </div>
       <div className="rounded-b-lg bg-slate-800 p-4 text-left font-mono">
-        <span className="text-3xl text-gray-100 underline">Scan & Go</span>
+        <span className="text-3xl text-gray-100 underline">{props.title}</span>
         <div>{props.description}</div>
       </div>
     </div>

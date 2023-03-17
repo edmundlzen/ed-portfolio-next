@@ -415,25 +415,34 @@ const Home: NextPage = () => {
                     carouselItems={[
                       [
                         <div key="1">
-                          <img
+                          <Image
                             src="/projects/scan_and_go/scanner_demo.gif"
                             className="rounded-t-lg"
+                            height={648}
+                            width={1152}
+                            alt="Scanner Demo"
                           />
                         </div>,
                       ],
                       [
                         <div key="2">
-                          <img
+                          <Image
                             src="/projects/scan_and_go/auto_locate_demo.gif"
                             className="rounded-t-lg"
+                            height={648}
+                            width={1152}
+                            alt="Auto Locate Demo"
                           />
                         </div>,
                       ],
                       [
                         <div key="3">
-                          <img
+                          <Image
                             src="/projects/scan_and_go/fast_checkout_demo.gif"
                             className="rounded-t-lg"
+                            height={648}
+                            width={1152}
+                            alt="Fast Checkout Demo"
                           />
                         </div>,
                       ],
