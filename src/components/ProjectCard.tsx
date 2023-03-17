@@ -9,7 +9,7 @@ interface projectCardProps {
 
 const ProjectCard = (props: projectCardProps) => {
   return (
-    <div className="w-72 rounded-t-lg shadow-lg">
+    <div className="w-full rounded-t-lg shadow-lg">
       <div>
         <Carousel
           showThumbs={false}
