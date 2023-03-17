@@ -4,6 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import "~/styles/globals.css";
 import { ParallaxProvider } from "react-scroll-parallax";
 import { MouseParallaxContainer } from "react-parallax-mouse";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (

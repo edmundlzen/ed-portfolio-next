@@ -412,10 +412,61 @@ const Home: NextPage = () => {
                 >
                   <ProjectCard
                     title="Scan & Go"
-                    description="A mobile application that allows users to scan and pay for their groceries in a supermarket."
-                    image="https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/scan_and_go.png?alt=media&token=29a3323b-a109-4a04-860a-c4249274b67a"
-                    className="bg-center"
-                    github={null}
+                    carouselItems={[
+                      [
+                        <div key="1">
+                          <img
+                            src="/projects/scan_and_go/scanner_demo.gif"
+                            className="rounded-t-lg"
+                          />
+                        </div>,
+                      ],
+                      [
+                        <div key="2">
+                          <img
+                            src="/projects/scan_and_go/auto_locate_demo.gif"
+                            className="rounded-t-lg"
+                          />
+                        </div>,
+                      ],
+                      [
+                        <div key="3">
+                          <img
+                            src="/projects/scan_and_go/fast_checkout_demo.gif"
+                            className="rounded-t-lg"
+                          />
+                        </div>,
+                      ],
+                    ]}
+                    description={
+                      <>
+                        <p className="mt-1 text-sm text-gray-300">
+                          &gt; A cross-platform mobile app built using{" "}
+                          <span className="font-bold text-blue-400">
+                            react-native
+                          </span>{" "}
+                          &
+                          <span className="font-bold text-orange-500">
+                            {" "}
+                            firebase
+                          </span>
+                          .
+                        </p>
+                        <p className="mt-1 text-sm text-gray-300">
+                          &gt; Allows shoppers to use their phones to scan items
+                          to{" "}
+                          <span className="text-green-400">check prices </span>
+                          and add them to a shopping cart for{" "}
+                          <span className="text-yellow-300">
+                            fast checkouts
+                          </span>{" "}
+                          by using QR Codes.
+                        </p>
+                        <p className="mt-1 text-sm text-gray-300">
+                          &gt; Freelance project
+                        </p>
+                      </>
+                    }
                   />
                 </motion.div>
               </div>
