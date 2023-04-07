@@ -1,5 +1,6 @@
 import { type AppType } from "next/dist/shared/lib/utils";
 import { ChakraProvider } from "@chakra-ui/react";
+import { Analytics } from "@vercel/analytics/react";
 
 import "~/styles/globals.css";
 import { ParallaxProvider } from "react-scroll-parallax";
@@ -12,6 +13,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <ParallaxProvider>
         <ChakraProvider>
           <Component {...pageProps} />
+          <Analytics />
         </ChakraProvider>
       </ParallaxProvider>
     </MouseParallaxContainer>
