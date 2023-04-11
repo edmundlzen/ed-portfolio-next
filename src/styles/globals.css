@@ -7,7 +7,7 @@
   src: url("/fonts/CascadiaCode.ttf") format("truetype");
 }
 
-* {
+main {
   -webkit-tap-highlight-color: transparent;
   font-family: "Cabin", sans-serif;
 }
