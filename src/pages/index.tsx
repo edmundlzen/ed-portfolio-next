@@ -297,7 +297,7 @@ const Home: NextPage = () => {
                       <span className="text-slate-400">
                         &quot;lookingForWork&quot;:
                       </span>{" "}
-                      <span className="text-purple-500">true</span>
+                      <span className="text-purple-500">false</span>
                     </div>
                     <div>
                       <span className="text-slate-600">15</span>
