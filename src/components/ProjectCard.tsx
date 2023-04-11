@@ -34,8 +34,9 @@ const ProjectCard = (props: projectCardProps) => {
         delay: 0.1,
       }}
       viewport={{ once: true }}
+      className="h-full"
     >
-      <div className="rounded-t-lg shadow-lg">
+      <div className="flex h-full flex-col rounded-t-lg shadow-lg">
         <div>
           <Carousel
             showThumbs={false}
@@ -56,12 +57,11 @@ const ProjectCard = (props: projectCardProps) => {
             {props.carouselItems &&
               props.carouselItems.map((item, index) => {
                 return (
-                  <div key={index} className="">
+                  <div key={index} className="relative h-64 w-full">
                     <Image
                       src={item.src}
-                      className="rounded-t-lg"
-                      height={648}
-                      width={1152}
+                      className="rounded-t-lg object-cover"
+                      fill
                       alt={item.alt}
                     />
                   </div>
@@ -69,7 +69,7 @@ const ProjectCard = (props: projectCardProps) => {
               })}
           </Carousel>
         </div>
-        <div className="rounded-b-lg bg-slate-800 p-4 text-left font-mono">
+        <div className="flex-1 rounded-b-lg bg-slate-800 p-4 text-left font-mono">
           <span className="flex items-center justify-center text-center text-3xl text-gray-100 underline">
             {props.title}
           </span>
