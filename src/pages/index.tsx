@@ -139,7 +139,7 @@ const Home: NextPage = () => {
             speed={-10}
             className="flex h-screen w-screen shrink-0 snap-start flex-col items-center justify-center text-4xl font-extrabold tracking-tight text-white"
           >
-            <MouseParallaxChild factorX={0.2} factorY={0.2}>
+            <MouseParallaxChild factorX={0.1} factorY={0.1}>
               <ReactTypingEffect
                 text={["Hi, I'm Edmund"]}
                 typingDelay={1000}
@@ -312,7 +312,7 @@ const Home: NextPage = () => {
             speed={60}
             className="flex min-h-screen snap-center flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
           >
-            <MouseParallaxChild factorX={0.2} factorY={0.2}>
+            <MouseParallaxChild factorX={0.1} factorY={0.1}>
               <motion.div
                 initial={{ opacity: 0, scale: 0, rotate: 180 }}
                 animate={{
@@ -409,7 +409,7 @@ const Home: NextPage = () => {
             speed={10}
             className="flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
           >
-            <MouseParallaxChild factorX={0.2} factorY={0.2}>
+            <MouseParallaxChild factorX={0.1} factorY={0.1}>
               <motion.div
                 initial={{ opacity: 0, scale: 0, rotate: 180 }}
                 whileInView={{
