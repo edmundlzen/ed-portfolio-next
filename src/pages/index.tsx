@@ -432,9 +432,7 @@ const Home: NextPage = () => {
               <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <ProjectCard
                   title="Scan & Go"
-                  status={
-                    <span className="font-bold text-green-400">Live</span>
-                  }
+                  status="live"
                   carouselItems={[
                     {
                       src: "/projects/scan_and_go/scanner_demo.gif",
@@ -489,9 +487,7 @@ const Home: NextPage = () => {
                 />
                 <ProjectCard
                   title="Pinkfredor Music Player"
-                  status={
-                    <span className="font-bold text-red-500">Deprecated</span>
-                  }
+                  status="deprecated"
                   carouselItems={[
                     {
                       src: "/projects/pinkfredor_music_player/home.png",
