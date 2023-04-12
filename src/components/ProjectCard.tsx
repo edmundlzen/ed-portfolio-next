@@ -143,7 +143,7 @@ const TrafficLight = (props: TrafficLightProps) => {
       </div>
       <div className="relative inline-flex w-full items-center justify-center gap-x-4">
         {/* <div className="absolute flex h-1 w-full items-center justify-center border-2 border-dotted border-gray-600" /> */}
-        <div className="z-10 flex h-8 w-fit items-center justify-center gap-x-2 rounded-full border border-gray-800 bg-slate-900 p-2 shadow-lg">
+        <div className="z-10 flex h-8 w-fit items-center justify-center gap-x-2 rounded-full border border-gray-700 bg-slate-900 p-2 shadow-lg">
           {/* <div className="flex items-center justify-center">
               Status:&nbsp;{props.status}
             </div> */}

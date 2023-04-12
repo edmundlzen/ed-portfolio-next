@@ -425,7 +425,7 @@ const Home: NextPage = () => {
                 }}
                 viewport={{ once: true }}
               >
-                <h1 className="mt-10 text-4xl font-extrabold tracking-tighter">
+                <h1 className="mt-10 text-4xl font-extrabold tracking-tight md:mb-8 md:text-7xl">
                   Projects
                 </h1>
               </motion.div>
