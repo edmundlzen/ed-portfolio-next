@@ -380,19 +380,6 @@ const Home: NextPage = () => {
                     </button>
                   </Tooltip>
                 </div>
-                <div className="flex items-center justify-center">
-                  <button
-                    className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-125"
-                    onClick={() => {
-                      window.open(
-                        "https://firebasestorage.googleapis.com/v0/b/personal-41935.appspot.com/o/Edmund's%20resume.pdf?alt=media&token=963b03fb-e4fa-4761-8f95-634f8b2b7b66"
-                      );
-                    }}
-                  >
-                    <div className="absolute -z-10 h-8 w-32 animate-ping rounded-2xl bg-blue-500 opacity-90" />
-                    <span className="select-none">Download my resume</span>
-                  </button>
-                </div>
               </motion.div>
             </MouseParallaxChild>
           </Parallax>
