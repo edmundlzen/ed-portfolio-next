@@ -339,18 +339,27 @@ const Home: NextPage = () => {
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
-                  delay: 0.1,
+                  delay: 0.05,
                 }}
                 viewport={{ once: true }}
+                className="flex flex-col items-center justify-center"
               >
-                <Text className="text-lg tracking-tight">
+                <Text className="text-lg">
                   My name is Edmund and I&apos;m a passionate{" "}
                   <span className="font-mono font-semibold text-green-500 underline">
                     software developer
                   </span>{" "}
                   from Johor, Malaysia.
+                  <br />
+                  <br />I love to create things and I&apos;m always looking for
+                  new opportunities to learn and grow! Currently, I&apos;m
+                  focusing on{" "}
+                  <span className="font-bold text-blue-500">
+                    Full-Stack Web Development
+                  </span>{" "}
+                  .
                 </Text>
-                <div className="mt-4 flex items-center justify-center gap-x-4">
+                <div className="my-1 flex items-center justify-center gap-x-4">
                   <Tooltip label="Github">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
@@ -379,6 +388,75 @@ const Home: NextPage = () => {
                       />
                     </button>
                   </Tooltip>
+                </div>
+              </motion.div>
+            </MouseParallaxChild>
+          </Parallax>
+          <Parallax
+            speed={60}
+            className="flex min-h-screen snap-center flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
+          >
+            <MouseParallaxChild factorX={0.1} factorY={0.1}>
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  scale: 0,
+                  rotate: 90,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  delay: 0.1,
+                }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="mt-4 flex w-10/12 max-w-4xl flex-col items-start justify-center text-start">
+                  <h1 className="mb-4 text-4xl underline underline-offset-4">
+                    About me
+                  </h1>
+                  During my schooling years, me and my friend would often
+                  challenge each other to create a website or a game.
+                  <br />
+                  <br />
+                  <span>
+                    We would always follow one or two tutorials and then after
+                    that didn&apos;t know what to do next.{" "}
+                    <span className="font-bold text-red-500">
+                      (Tutorial hell)
+                    </span>
+                  </span>
+                  <br />
+                  One day, I got annoyed by my other friend constantly telling
+                  me to go to a website and starting our Minecraft server and
+                  complaining if I didn&apos;t do it fast enough.
+                  <br />
+                  <br />
+                  Since it was free, the server required us to go to a website
+                  and manually click a button to start the server every time we
+                  wanted to play. And only I had the credentials at the time, so
+                  if I wasn&apos;t online, they couldn&apos;t play.
+                  <br />
+                  <br />
+                  I got pretty tired of his complaining and since I was also
+                  learning the basics of python at that time, I decided to try
+                  and create a bot in our discord server that would
+                  automatically start the server for us.
+                  <br />
+                  <br />
+                  After a lot of copying, pasting and googling, I managed to get
+                  it working. That was the first time I felt the satisfaction of
+                  creating something from scratch. I was hooked.
+                  <br />
+                  <br />
+                  Fast forward to 3 years later, I&apos;m now a software
+                  developer and I&apos;m still learning new things everyday.
                 </div>
               </motion.div>
             </MouseParallaxChild>
