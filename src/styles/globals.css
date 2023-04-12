@@ -11,3 +11,17 @@ main {
   -webkit-tap-highlight-color: transparent;
   font-family: "Cabin", sans-serif;
 }
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #e2e60075, 0 0 10px #e2e60075, 0 0 10px #e2e60075,
+      0 0 5px #e2e60075, 0 0 10px #e2e60075, 0 0 5px #e2e60075,
+      0 0 10px #e2e60075;
+  }
+
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 30px #e6e200, 0 0 5px #e2e60075,
+      0 0 10px #e2e60075, 0 0 5px #e2e60075, 0 0 10px #e2e60075,
+      0 0 5px #e2e60075;
+  }
+}

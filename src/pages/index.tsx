@@ -546,60 +546,41 @@ const Home: NextPage = () => {
                     setImageModalVisible();
                   }}
                 />
-                {/* <ProjectCard
+                <ProjectCard
                   title="Healthcare System"
-                  status={
-                    <span className="font-bold text-green-500">Live</span>
-                  }
+                  status="live"
                   carouselItems={[
                     {
-                      src: "/projects/pinkfredor_music_player/home.png",
+                      src: "/projects/healthcare_system/home.png",
                       alt: "Home",
-                    },
-                    {
-                      src: "/projects/pinkfredor_music_player/music_player.png",
-                      alt: "Music Player",
                     },
                   ]}
                   description={
                     <>
                       <p className="mt-1 text-sm text-gray-300">
-                        &gt; A web app built using{" "}
-                        <span className="font-bold text-sky-500">react</span> &{" "}
+                        &gt; An android app built using{" "}
+                        <span className="font-bold text-green-500">
+                          Android SDK
+                        </span>{" "}
+                        &{" "}
                         <span className="font-bold text-orange-500">
                           firebase
                         </span>
                         .
                       </p>
                       <p className="mt-1 text-sm text-gray-300">
-                        &gt; Allows users to stream music from their{" "}
-                        <span className="text-yellow-300">Google Drive</span>{" "}
-                        account.
+                        &gt; Helps end user{" "}
+                        <span className="text-pink-400">
+                          maintain their health
+                        </span>{" "}
+                        and{" "}
+                        <span className="text-purple-300">
+                          make appointments
+                        </span>{" "}
+                        with nutritionists.
                       </p>
                       <p className="mt-1 text-sm text-gray-300">
-                        &gt; Collaboration project with developers{" "}
-                        <a
-                          href="https://github.com/benjaminthio"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-400"
-                        >
-                          @BenjaminThio
-                        </a>{" "}
-                        &{" "}
-                        <a
-                          href="https://github.com/Tiffceet"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-400"
-                        >
-                          @Tiffceet
-                        </a>{" "}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; <span className="text-red-500">Deprecated</span>{" "}
-                        due to YouTube Music introducing self music file
-                        uploading.
+                        &gt; Freelance project
                       </p>
                     </>
                   }
@@ -608,7 +589,107 @@ const Home: NextPage = () => {
                     setImageModalDescription(description);
                     setImageModalVisible();
                   }}
-                /> */}
+                />
+                <ProjectCard
+                  title="Jawab.my"
+                  status="on hold"
+                  carouselItems={[
+                    {
+                      src: "/projects/jawab_my/home.png",
+                      alt: "Home",
+                    },
+                    {
+                      src: "/projects/jawab_my/question_view.png",
+                      alt: "Question View",
+                    },
+                  ]}
+                  description={
+                    <>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; A web app built using{" "}
+                        <span className="font-bold text-blue-400">Next JS</span>{" "}
+                        &{" "}
+                        <span className="font-bold text-blue-300">
+                          TRPC + Prisma
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; An{" "}
+                        <span className="text-green-400">
+                          educational forum
+                        </span>{" "}
+                        where students can ask and get answers for their
+                        homework.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt;{" "}
+                        <span className="text-yellow-400">
+                          Pending redesign
+                        </span>
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Personal side project
+                      </p>
+                    </>
+                  }
+                  onImageClick={(src: string, description: string) => {
+                    setImageModalSrc(src);
+                    setImageModalDescription(description);
+                    setImageModalVisible();
+                  }}
+                />
+                <ProjectCard
+                  title="Causeway VTL Ticket Info"
+                  highlight
+                  status="deprecated"
+                  carouselItems={[
+                    {
+                      src: "/projects/causeway_vtl/messages_view.png",
+                      alt: "One of the messages of a successfully scraped ticket",
+                    },
+                  ]}
+                  description={
+                    <>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; A python bot + web scraper built using{" "}
+                        <span className="font-bold text-yellow-400">
+                          Python
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Scrapes Causeway Link&apos;s website for bus
+                        tickets and sends them to a telegram group.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Gives people a chance to buy tickets and go home
+                        despite the dreaded{" "}
+                        <span className="text-red-600">scalper bots</span>.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; At it&apos;s peak, had over{" "}
+                        <span className="font-black text-yellow-500">
+                          6,000 subscribers
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; <span className="text-red-500">Deprecated</span>{" "}
+                        after travel ban between SG & MY ended.
+                      </p>
+                      <p className="mt-1 text-sm text-gray-300">
+                        &gt; Personally my proudest & most successful side
+                        project.
+                      </p>
+                    </>
+                  }
+                  onImageClick={(src: string, description: string) => {
+                    setImageModalSrc(src);
+                    setImageModalDescription(description);
+                    setImageModalVisible();
+                  }}
+                />
               </div>
             </MouseParallaxChild>
           </Parallax>

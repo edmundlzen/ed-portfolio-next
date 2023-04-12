@@ -12,6 +12,7 @@ interface projectCardProps {
     alt: string;
   }[];
   onImageClick?: (src: string, description: string) => void;
+  highlight?: boolean;
 }
 
 const ProjectCard = (props: projectCardProps) => {
@@ -57,7 +58,10 @@ const ProjectCard = (props: projectCardProps) => {
             {props.carouselItems &&
               props.carouselItems.map((item, index) => {
                 return (
-                  <div key={index} className="relative h-64 w-full">
+                  <div
+                    key={index}
+                    className="relative h-64 w-full cursor-pointer"
+                  >
                     <Image
                       src={item.src}
                       className="rounded-t-lg object-cover"
@@ -72,7 +76,17 @@ const ProjectCard = (props: projectCardProps) => {
         <div className="flex-1 rounded-b-lg bg-slate-800 p-4 text-left font-mono">
           <div className="relative inline-flex h-48 w-full flex-col items-center justify-end rounded-md bg-gray-900 py-3 shadow-md shadow-gray-900">
             <div className="absolute top-0 left-0 h-full w-full bg-[url(/images/grid_card.svg)] bg-repeat" />
-            <span className="flex flex-1 items-center justify-center py-3 text-center font-mono text-3xl font-bold text-gray-100">
+            <span
+              className={
+                "flex flex-1 items-center justify-center py-3 text-center font-mono text-3xl font-bold" +
+                (props.highlight ? " text-yellow-100" : " text-gray-100")
+              }
+              style={{
+                animation: props.highlight
+                  ? "glow 1s ease-in-out infinite alternate"
+                  : "",
+              }}
+            >
               {props.title}
             </span>
             <TrafficLight
@@ -149,28 +163,35 @@ const TrafficLight = (props: TrafficLightProps) => {
             </div> */}
           {
             {
-              red: (
+              deprecated: (
                 <>
                   <div className="h-4 w-4 rounded-full bg-red-600 shadow-inner shadow-red-300" />
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                 </>
               ),
-              yellow: (
+              "in development": (
                 <>
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                   <div className="h-4 w-4 rounded-full bg-yellow-400 shadow-inner shadow-yellow-100" />
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                 </>
               ),
-              green: (
+              "on hold": (
+                <>
+                  <div className="h-4 w-4 rounded-full bg-red-600 shadow-inner shadow-red-300" />
+                  <div className="h-4 w-4 rounded-full bg-yellow-400 shadow-inner shadow-yellow-100" />
+                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
+                </>
+              ),
+              live: (
                 <>
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                   <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
                   <div className="h-4 w-4 rounded-full bg-green-500 shadow-inner shadow-green-100" />
                 </>
               ),
-            }[props.status]
+            }[props.statusText]
           }
         </div>
       </div>
