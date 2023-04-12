@@ -209,15 +209,6 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">3 </span>
-                      <pre className="inline">{"  "}</pre>
-                      <span className="text-slate-400">
-                        &quot;age&quot;:
-                      </span>{" "}
-                      <span className="text-rose-500">17</span>
-                      {","}
-                    </div>
-                    <div>
                       <span className="text-slate-600">4 </span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
