@@ -107,20 +107,37 @@ const TrafficLight = (props: TrafficLightProps) => {
       <div className="relative inline-flex w-full items-center justify-center gap-x-4">
         <div className="absolute flex h-1 w-full items-center justify-center border-2 border-dotted border-gray-600" />
         <div className="z-10 flex h-8 w-fit gap-x-2 rounded-md border border-gray-800 bg-slate-900 p-1 shadow-lg">
-          <div className="flex w-28 items-center justify-center rounded-sm bg-black p-2 text-sm shadow-inner shadow-gray-700">
-            <span
-              className={
-                "font-bold" +
-                {
-                  red: " text-red-600",
-                  yellow: " text-yellow-400",
-                  green: " text-green-500",
-                }[props.status]
-              }
-            >
-              {props.statusText.slice(0, 1).toUpperCase() +
-                props.statusText.slice(1)}
-            </span>
+          <div className="relative flex w-28 items-center justify-start overflow-hidden rounded-sm bg-black py-2 text-sm shadow-inner shadow-gray-700">
+            <div className="w-full animate-marquee">
+              <span
+                className={
+                  "font-bold" +
+                  {
+                    red: " text-red-600",
+                    yellow: " text-yellow-400",
+                    green: " text-green-500",
+                  }[props.status]
+                }
+              >
+                {props.statusText.slice(0, 1).toUpperCase() +
+                  props.statusText.slice(1)}
+              </span>
+            </div>
+            <div className="absolute w-full animate-marquee2">
+              <span
+                className={
+                  "font-bold" +
+                  {
+                    red: " text-red-600",
+                    yellow: " text-yellow-400",
+                    green: " text-green-500",
+                  }[props.status]
+                }
+              >
+                {props.statusText.slice(0, 1).toUpperCase() +
+                  props.statusText.slice(1)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
