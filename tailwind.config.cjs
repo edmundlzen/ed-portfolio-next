@@ -13,10 +13,12 @@ const config = {
       keyframes: {
         marquee: {
           "0%": { transform: "translateX(0%)" },
+          "80%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(-100%)" },
         },
         marquee2: {
           "0%": { transform: "translateX(100%)" },
+          "80%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(0%)" },
         },
       },
