@@ -23,13 +23,13 @@ const MysteryProjectCard = () => {
         delay: 0.1,
       }}
       viewport={{ once: true }}
-      className="h-full"
+      className="h-full cursor-help"
     >
       <div className="flex h-full flex-col rounded-t-lg shadow-lg">
         <div className="relative overflow-hidden rounded-t-md bg-gray-900">
           <div className="absolute top-0 left-0 h-full w-full animate-bg bg-[url(/images/grid_card.svg)] bg-repeat" />
           <div className="absolute top-0 left-0 h-full w-full bg-black bg-opacity-30" />
-          <div className="relative flex h-64 w-full items-center justify-center font-serif text-5xl">
+          <div className="relative flex h-64 w-full select-none items-center justify-center font-serif text-5xl">
             ? ? ?
           </div>
         </div>
@@ -138,13 +138,13 @@ const TrafficLight = (props: TrafficLightProps) => {
               ),
               "???": (
                 <>
-                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
+                  <div className="flex h-4 w-4 select-none items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
                     ?
                   </div>
-                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
+                  <div className="flex h-4 w-4 select-none items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
                     ?
                   </div>
-                  <div className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
+                  <div className="flex h-4 w-4 select-none items-center justify-center rounded-full bg-gray-700 text-xs shadow-inner shadow-gray-300">
                     ?
                   </div>
                 </>
