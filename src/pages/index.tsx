@@ -8,7 +8,7 @@ import { Parallax } from "react-scroll-parallax";
 import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
-import { ProjectCard } from "~/components";
+import { MysteryProjectCard, ProjectCard } from "~/components";
 
 const Home: NextPage = () => {
   const [title, setTitle] = useState("_");
@@ -746,6 +746,7 @@ const Home: NextPage = () => {
                     setImageModalVisible();
                   }}
                 />
+                <MysteryProjectCard />
               </div>
             </MouseParallaxChild>
           </Parallax>

@@ -9,6 +9,7 @@ const config = {
       animation: {
         marquee: "marquee 10s linear infinite",
         marquee2: "marquee2 10s linear infinite",
+        bg: "bg 20s ease-in-out infinite",
       },
       keyframes: {
         marquee: {
@@ -20,6 +21,11 @@ const config = {
           "0%": { transform: "translateX(100%)" },
           "80%": { transform: "translateX(0%)" },
           "100%": { transform: "translateX(0%)" },
+        },
+        bg: {
+          "0%": { backgroundPosition: "bottom right" },
+          "50%": { backgroundPosition: "top left" },
+          "100%": { backgroundPosition: "bottom right" },
         },
       },
     },
