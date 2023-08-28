@@ -25,3 +25,9 @@ main {
       0 0 5px #e2e60075;
   }
 }
+
+.rbt {
+  background: -webkit-linear-gradient(45deg, #ffb3d4, #c0ddff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
