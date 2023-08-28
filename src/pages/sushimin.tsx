@@ -20,7 +20,7 @@ const Sushimin: NextPage = () => {
             className="flex flex h-full w-full cursor-pointer select-none flex-col items-center justify-center bg-black px-4 text-center font-serif text-2xl text-white"
             onClick={() => setStart(true)}
           >
-            Benjamin's Incriminating Confession
+            Benjamin&apos;s Incriminating Confession
             <span className="mt-2 block animate-bounce text-sm">
               (Click anywhere to start)
             </span>
