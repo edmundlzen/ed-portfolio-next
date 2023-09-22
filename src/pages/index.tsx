@@ -286,9 +286,9 @@ const Home: NextPage = () => {
                       <span className="text-slate-600">14</span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
-                        &quot;lookingForWork&quot;:
+                        &quot;pain&quot;:
                       </span>{" "}
-                      <span className="text-purple-500">false</span>
+                      <span className="text-purple-500">true</span>
                     </div>
                     <div>
                       <span className="text-slate-600">15</span>
@@ -345,19 +345,16 @@ const Home: NextPage = () => {
                 className="flex flex-col items-center justify-center"
               >
                 <Text className="text-lg">
-                  My name is Edmund and I&apos;m a passionate{" "}
-                  <span className="font-mono font-semibold text-green-500 underline">
-                    software developer
+                  My name is Edmund and I&apos;m a{" "}
+                  <span className="font-mono font-semibold text-yellow-300 underline">
+                    student
                   </span>{" "}
                   from Johor, Malaysia.
                   <br />
                   <br />I love to create things and I&apos;m always looking for
                   new opportunities to learn and grow! Currently, I&apos;m
                   focusing on{" "}
-                  <span className="font-bold text-blue-500">
-                    Full-Stack Web Development
-                  </span>{" "}
-                  .
+                  <span className="font-bold text-indigo-500">School</span> .
                 </Text>
                 <div className="my-1 flex items-center justify-center gap-x-4">
                   <Tooltip label="Github">
@@ -374,11 +371,11 @@ const Home: NextPage = () => {
                       />
                     </button>
                   </Tooltip>
-                  <Tooltip label="LinkedIn">
+                  {/* <Tooltip label="LinkedIn">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0274b3] transition-all hover:scale-125"
                       onClick={() => {
-                        window.open("https://www.linkedin.com/in/edmundlzen/");
+                        window.open("https://www.linkedin.com/in/nothx/");
                       }}
                     >
                       <img
@@ -387,12 +384,12 @@ const Home: NextPage = () => {
                         className="h-8 w-8"
                       />
                     </button>
-                  </Tooltip>
+                  </Tooltip> */}
                 </div>
               </motion.div>
             </MouseParallaxChild>
           </Parallax>
-          <Parallax
+          {/* <Parallax
             speed={60}
             className="flex min-h-screen snap-center flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
           >
@@ -460,7 +457,7 @@ const Home: NextPage = () => {
                 </div>
               </motion.div>
             </MouseParallaxChild>
-          </Parallax>
+          </Parallax> */}
           <Parallax
             speed={10}
             className="flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
