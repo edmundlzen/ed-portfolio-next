@@ -20,6 +20,13 @@ export default function Document() {
           rel="icon"
           href="icons8-pokeball-96.png"
         />
+        <meta property="og:title" content="edmundlzen.dev" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://edmundlzen.dev" />
+        <meta
+          property="og:image"
+          content="https://edmundlzen.dev/api/dyn_images/home"
+        />
       </Head>
       <body>
         <Main />
