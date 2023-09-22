@@ -28,6 +28,11 @@ export default function Document() {
           property="og:image"
           content="https://edmundlzen.dev/api/dyn_images/home"
         />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:image"
+          content="https://edmundlzen.dev/api/dyn_images/home"
+        />
       </Head>
       <body>
         <Main />
