@@ -21,6 +21,7 @@ export default function Document() {
           href="icons8-pokeball-96.png"
         />
         <meta property="og:title" content="edmundlzen.dev" />
+        <meta property="og:description" content="Edmund's personal website" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://edmundlzen.dev" />
         <meta
