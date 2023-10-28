@@ -118,10 +118,15 @@ const Home: NextPage = () => {
           style={{ opacity: imageModalOpacity }}
           onClick={() => setImageModalInvisible()}
         >
-          <img
-            src={imageModalSrc}
-            className="max-h-full max-w-full rounded-lg"
-          />
+          <div className="relative h-1/2 w-1/2">
+            <Image
+              src={imageModalSrc}
+              alt={imageModalDescription}
+              fill
+              className="object-contain"
+            />
+            {/* TODO: Fix this and make the image rounded */}
+          </div>
           <div className="mt-4 flex flex-col items-center justify-center">
             <Text className="text-md text-white">{imageModalDescription}</Text>
           </div>
@@ -363,10 +368,12 @@ const Home: NextPage = () => {
                         window.open("https://github.com/edmundlzen");
                       }}
                     >
-                      <img
+                      <Image
                         src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"
                         alt="Github"
-                        className="h-8 w-8 invert"
+                        className="invert"
+                        height={32}
+                        width={32}
                       />
                     </button>
                   </Tooltip>

@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import { useState } from "react";
+import Image from "next/image";
 
 const Spin: NextPage = () => {
   const [start, setStart] = useState(false);
@@ -28,10 +29,12 @@ const Spin: NextPage = () => {
       />
       {/* Click blocker */}
       <div className="absolute h-full w-full" />
-      <img
+      <Image
         src="/images/spin.jpg"
         className="pointer-events-none h-1/2 animate-spin rounded-full shadow-md shadow-black"
         alt="spin"
+        width={500}
+        height={500}
       />
     </div>
   );
