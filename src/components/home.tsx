@@ -130,6 +130,16 @@ const Home: NextPage = () => {
   const [myPresence, updateMyPresence] = useMyPresence();
   const messages = useStorage((root) => root.messages);
   const status = useStatus();
+  const bottomChatRef = useRef(null);
+
+  useEffect(() => {
+    if (bottomChatRef.current) {
+      (bottomChatRef.current as HTMLDivElement).scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   useEffect(() => {
     let i = 0;
@@ -570,18 +580,8 @@ const Home: NextPage = () => {
                           />
                         </div>
                       ) : (
-                        <div className="relative h-full">
-                          <div className="absolute bottom-2 left-3 font-mono text-sm">
-                            {others.some((other) => other.presence.typing) ? (
-                              others
-                                .filter((other) => other.presence.typing)
-                                .map((other) => other.presence.name)
-                                .join(", ") + " is typing..."
-                            ) : (
-                              <></>
-                            )}
-                          </div>
-                          {messages?.map((message) => {
+                        <div className="h-full">
+                          {messages?.slice(-30)?.map((message) => {
                             return (
                               <div
                                 key={message.timestamp}
@@ -620,10 +620,30 @@ const Home: NextPage = () => {
                               </div>
                             );
                           })}
+                          <div ref={bottomChatRef} />
                         </div>
                       )}
                     </div>
-                    <div className="flex h-16 items-center gap-x-2 bg-slate-800 p-2">
+                    <div className="relative flex h-16 items-center gap-x-2 bg-slate-800 p-2">
+                      <div
+                        className="absolute -top-6 -left-[0.05rem] flex h-6 items-center justify-center rounded-tr-lg bg-black bg-opacity-80 font-mono text-sm transition-all"
+                        style={{
+                          opacity: others.some((other) => other.presence.typing)
+                            ? 1
+                            : 0,
+                        }}
+                      >
+                        {others.some((other) => other.presence.typing) ? (
+                          <div className="px-3">
+                            {others
+                              .filter((other) => other.presence.typing)
+                              .map((other) => other.presence.name)
+                              .join(", ") + " is typing..."}
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
                       <input
                         className="h-full w-full rounded-full bg-slate-900 bg-opacity-100 p-2 px-4 font-mono outline-none transition-all focus:bg-opacity-80"
                         onFocus={() => {
