@@ -118,11 +118,11 @@ const Home: NextPage = () => {
           style={{ opacity: imageModalOpacity }}
           onClick={() => setImageModalInvisible()}
         >
-          <div className="relative h-1/2 w-1/2">
+          <div className="h-9/12 relative flex w-9/12 items-center justify-center overflow-hidden lg:h-1/2 lg:w-1/2">
             {imageModalSrc.split(".").pop() === "webm" ? (
               <video
                 src={imageModalSrc}
-                className="object-cover"
+                className="object-fit max-h-full max-w-full"
                 style={{
                   borderRadius: "0.5px",
                 }}
