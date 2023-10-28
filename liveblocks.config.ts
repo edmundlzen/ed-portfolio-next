@@ -1,4 +1,4 @@
-import { createClient } from "@liveblocks/client";
+import { createClient, LiveList } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
 
 const client = createClient({
@@ -13,6 +13,8 @@ const client = createClient({
 // `user.presence` property. Must be JSON-serializable.
 type Presence = {
   cursor: { x: number; y: number } | null;
+  name: string | null;
+  typing: boolean;
   // ...
 };
 
@@ -22,7 +24,7 @@ type Presence = {
 // automatically persisted and synced to all connected clients.
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
-  // ...
+  messages: LiveList<{ name: string; content: string; timestamp: number }>;
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as

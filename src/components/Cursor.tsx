@@ -1,15 +1,24 @@
 import { motion } from "framer-motion";
+import { useMemo } from "react";
+import { getContrastingColor } from "~/utils/getContrastingColor";
 
 // Spring animated cursor
 export default function Cursor({
   color,
+  name,
   x,
   y,
 }: {
   color: string;
+  name: string;
   x: number;
   y: number;
 }) {
+  const textColor = useMemo(
+    () => (color ? getContrastingColor(color[1] as string) : undefined),
+    [color]
+  );
+
   return (
     <motion.div
       style={{
@@ -27,6 +36,15 @@ export default function Cursor({
       }}
     >
       <CursorSvg color={color} />
+      <div
+        className={"rounded-full px-2 shadow-lg"}
+        style={{
+          backgroundColor: color,
+          color: textColor,
+        }}
+      >
+        <div className={"m-1 font-mono text-sm"}>{name}</div>
+      </div>
     </motion.div>
   );
 }

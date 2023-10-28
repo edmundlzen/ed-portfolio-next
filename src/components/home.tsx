@@ -8,7 +8,15 @@ import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
 import { Cursor, MysteryProjectCard, ProjectCard } from "~/components";
-import { useOthers, useUpdateMyPresence } from "liveblocks.config";
+import {
+  useMutation,
+  useMyPresence,
+  useOthers,
+  useStatus,
+  useStorage,
+  useUpdateMyPresence,
+} from "liveblocks.config";
+import moment from "moment";
 
 const FULL_TITLE = "Edmund's Portfolio";
 const CURSOR_COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
@@ -85,6 +93,7 @@ function useLiveCursors() {
       cursors.push({
         x: presence.cursor.x * window.innerWidth,
         y: presence.cursor.y,
+        name: presence.name,
         connectionId,
       });
     }
@@ -115,8 +124,12 @@ const Home: NextPage = () => {
   const [imageModalSrc, setImageModalSrc] = useState("");
   const [imageModalDescription, setImageModalDescription] = useState("");
   const [imageModalOpacity, setImageModalOpacity] = useState(0);
+  const [messageContent, setMessageContent] = useState("");
   const others = useOthers();
   const cursors = useLiveCursors();
+  const [myPresence, updateMyPresence] = useMyPresence();
+  const messages = useStorage((root) => root.messages);
+  const status = useStatus();
 
   useEffect(() => {
     let i = 0;
@@ -185,6 +198,15 @@ const Home: NextPage = () => {
       setImageModalHidden(true);
     }, 300);
   };
+
+  const onSendMessage = useMutation(({ storage }, message: string) => {
+    storage.get("messages").push({
+      name: myPresence.name as string,
+      content: message,
+      timestamp: Date.now(),
+    });
+    setMessageContent("");
+  }, []);
 
   return (
     <>
@@ -489,6 +511,169 @@ const Home: NextPage = () => {
                       />
                     </button>
                   </Tooltip> */}
+                </div>
+              </motion.div>
+            </MouseParallaxChild>
+          </Parallax>
+          <Parallax
+            speed={60}
+            className="flex min-h-screen snap-center flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
+          >
+            <MouseParallaxChild factorX={0.1} factorY={0.1}>
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  scale: 0,
+                  rotate: 90,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  delay: 0.1,
+                }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="flex h-[80vh] w-[90vw] flex-col rounded-lg border-[1px] border-black border-opacity-50 bg-slate-900 shadow-xl transition-all">
+                  <div className="h-8 w-full rounded-t-lg bg-slate-800">
+                    <div className="flex h-8 w-6/12 items-center justify-start rounded-t-lg border-2 border-slate-900 border-b-black border-opacity-25 bg-slate-900 px-2 font-mono text-sm md:w-4/12">
+                      <div className="relative mr-1 h-1/2 w-6">
+                        <Image
+                          src={"/images/json.png"}
+                          fill
+                          objectFit="contain"
+                          alt="JSON Logo"
+                          className="invert"
+                        />
+                      </div>
+                      <Text className="font-semibold tracking-normal">
+                        guestbook.txt
+                      </Text>
+                    </div>
+                  </div>
+                  <div className="flex h-full flex-col">
+                    <div className="flex-1 basis-0 overflow-y-auto">
+                      {status !== "connected" ? (
+                        <div className="flex h-full items-center justify-center">
+                          <img
+                            width="24"
+                            height="24"
+                            src="https://img.icons8.com/fluency-systems-regular/48/FFFFFF/loading.png"
+                            alt="loading"
+                            className="animate-spin"
+                          />
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <div className="absolute bottom-1 left-2">
+                            {others.some((other) => other.presence.typing) ? (
+                              others
+                                .filter((other) => other.presence.typing)
+                                .map((other) => other.presence.name)
+                                .join(", ") + " is typing..."
+                            ) : (
+                              <></>
+                            )}
+                          </div>
+                          {messages?.map((message) => {
+                            return (
+                              <div
+                                key={message.timestamp}
+                                className="flex flex-col items-start justify-start p-3 font-mono text-sm font-semibold tracking-normal"
+                              >
+                                <div className="flex items-center justify-start">
+                                  <Text className="text-slate-600">
+                                    {message.name}
+                                  </Text>
+                                  <Text className="text-slate-400">:</Text>
+                                </div>
+                                <div>
+                                  <pre className="inline">{"  "}</pre>
+                                  <span className="text-slate-400">
+                                    &quot;message&quot;:
+                                  </span>{" "}
+                                  <span className="text-lime-400">
+                                    &quot;{message.content}&quot;
+                                  </span>
+                                  {","}
+                                </div>
+                                <div>
+                                  <pre className="inline">{"  "}</pre>
+                                  <span className="text-slate-400">
+                                    &quot;timestamp&quot;:
+                                  </span>{" "}
+                                  <span className="text-lime-400">
+                                    &quot;
+                                    {moment(message.timestamp).format(
+                                      "DD MMM YYYY HH:mm:ss"
+                                    )}
+                                    &quot;
+                                  </span>
+                                  {","}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex h-16 items-center gap-x-2 bg-slate-800 p-2">
+                      <input
+                        className="h-full w-full rounded-full bg-slate-900 bg-opacity-100 p-2 px-4 font-mono outline-none transition-all focus:bg-opacity-80"
+                        onFocus={() => {
+                          updateMyPresence({
+                            typing: true,
+                          });
+                        }}
+                        onBlur={() => {
+                          updateMyPresence({
+                            typing: false,
+                          });
+                        }}
+                        value={messageContent}
+                        onChange={(e) => {
+                          setMessageContent(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            onSendMessage(messageContent);
+                          }
+                        }}
+                      />
+                      <button
+                        className="flex aspect-square h-full select-none items-center justify-center rounded-full bg-slate-900 p-3 transition-all hover:opacity-80 active:scale-95"
+                        onClick={() => onSendMessage(messageContent)}
+                        disabled={status !== "connected"}
+                        style={{
+                          pointerEvents:
+                            status !== "connected" ? "none" : "auto",
+                        }}
+                      >
+                        {status !== "connected" ? (
+                          <img
+                            width="24"
+                            height="24"
+                            src="https://img.icons8.com/fluency-systems-regular/48/FFFFFF/loading.png"
+                            alt="loading"
+                            className="animate-spin"
+                          />
+                        ) : (
+                          <img
+                            width="24"
+                            height="24"
+                            src="https://img.icons8.com/material-rounded/24/FFFFFF/sent.png"
+                            alt="send"
+                          />
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </MouseParallaxChild>
@@ -853,10 +1038,11 @@ const Home: NextPage = () => {
           </Parallax>
         </div>
       </main>
-      {cursors.map(({ x, y, connectionId }) => (
+      {cursors.map(({ x, y, name, connectionId }) => (
         <Cursor
           key={connectionId}
           color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length] || "red"}
+          name={name || "Anonymous"}
           x={x}
           y={y}
         />
