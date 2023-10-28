@@ -210,6 +210,7 @@ const Home: NextPage = () => {
   };
 
   const onSendMessage = useMutation(({ storage }, message: string) => {
+    if (message.trim() === "") return;
     storage.get("messages").push({
       name: myPresence.name as string,
       content: message,
