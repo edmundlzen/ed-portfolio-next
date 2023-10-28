@@ -570,8 +570,8 @@ const Home: NextPage = () => {
                           />
                         </div>
                       ) : (
-                        <div className="relative">
-                          <div className="absolute bottom-1 left-2">
+                        <div className="relative h-full">
+                          <div className="absolute bottom-2 left-3 font-mono text-sm">
                             {others.some((other) => other.presence.typing) ? (
                               others
                                 .filter((other) => other.presence.typing)
