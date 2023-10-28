@@ -60,14 +60,27 @@ const ProjectCard = (props: projectCardProps) => {
                 return (
                   <div
                     key={index}
-                    className="relative h-64 w-full cursor-pointer"
+                    className="relative h-64 w-full cursor-pointer overflow-hidden rounded-t-lg"
                   >
-                    <Image
-                      src={item.src}
-                      className="rounded-t-lg object-cover"
-                      fill
-                      alt={item.alt}
-                    />
+                    {item.src.split(".").pop() === "webm" ? (
+                      <video
+                        src={item.src}
+                        className="h-full object-cover"
+                        style={{
+                          borderRadius: "0.5px",
+                        }}
+                        autoPlay
+                        loop
+                        muted
+                      />
+                    ) : (
+                      <Image
+                        src={item.src}
+                        className="rounded-t-lg object-cover"
+                        fill
+                        alt={item.alt}
+                      />
+                    )}
                   </div>
                 );
               })}

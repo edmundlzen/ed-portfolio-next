@@ -119,12 +119,25 @@ const Home: NextPage = () => {
           onClick={() => setImageModalInvisible()}
         >
           <div className="relative h-1/2 w-1/2">
-            <Image
-              src={imageModalSrc}
-              alt={imageModalDescription}
-              fill
-              className="object-contain"
-            />
+            {imageModalSrc.split(".").pop() === "webm" ? (
+              <video
+                src={imageModalSrc}
+                className="object-cover"
+                style={{
+                  borderRadius: "0.5px",
+                }}
+                autoPlay
+                loop
+                muted
+              />
+            ) : (
+              <Image
+                src={imageModalSrc}
+                alt={imageModalDescription}
+                fill
+                className="object-contain"
+              />
+            )}
             {/* TODO: Fix this and make the image rounded */}
           </div>
           <div className="mt-4 flex flex-col items-center justify-center">
@@ -494,15 +507,15 @@ const Home: NextPage = () => {
                   status="live"
                   carouselItems={[
                     {
-                      src: "/projects/scan_and_go/scanner_demo.gif",
+                      src: "/projects/scan_and_go/scanner_demo.webm",
                       alt: "QR Code Scanner Demo",
                     },
                     {
-                      src: "/projects/scan_and_go/auto_locate_demo.gif",
+                      src: "/projects/scan_and_go/auto_locate_demo.webm",
                       alt: "Auto Locate closest store Demo",
                     },
                     {
-                      src: "/projects/scan_and_go/fast_checkout_demo.gif",
+                      src: "/projects/scan_and_go/fast_checkout_demo.webm",
                       alt: "Fast checkout via QR Code Demo",
                     },
                     {
