@@ -8,11 +8,7 @@ import ReactTypingEffect from "react-typing-effect";
 import { MouseParallaxChild } from "react-parallax-mouse";
 import { motion, useInView } from "framer-motion";
 import { Cursor, MysteryProjectCard, ProjectCard } from "~/components";
-import {
-  useMyPresence,
-  useOthers,
-  useUpdateMyPresence,
-} from "liveblocks.config";
+import { useOthers, useUpdateMyPresence } from "liveblocks.config";
 
 const FULL_TITLE = "Edmund's Portfolio";
 const CURSOR_COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
@@ -865,6 +861,25 @@ const Home: NextPage = () => {
           y={y}
         />
       ))}
+      <motion.div
+        className="fixed bottom-3 left-3 flex h-5 items-center gap-x-2 font-mono text-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <img
+          className="h-5/6"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABl0lEQVR4nO2Wv0oDQRCHY6FBNFErfQCxNDFYi71iJxa24kskWpigEUSUPISSYCfYWIldIsSHiPljKRKrfLIwgbjZ2btogk0+2GbvN7+5nZ3du0hkzJj/BlgHssAjUAfaMuoydwKkhplwB3ghPGVg+y8JV4AHfs89sDxo0j3g02HWBNJAEpiRsQZk5JnNB7AbJuEEcAp0HCZFIOaJjQElR5zxyhlvX9KCUraiGtjv4UpuuHZ6ABe4afpW6vCJAy3F69wWH6KTtrRTxgB4A2pA3sxZmiOP30FXlAC+PMKEZWoS2eQtjWk4jTawakQV/Pwos6zSpuZoNB8VI6qOILHZZx9VI9pUjk+XZIhSnw1Q6g6w0RVeeYQZR3PlZeVacx17/C5ts+chHac54F3xegIm7YAF4FUJKA1wgdwpHlVgXgtckq+LljwesFItaRlYDHrraeBWMWjJ5ZACZmWkZE+18t4Yz6Bq9ZZsXzk6YamJR+AW9SEXQc6zGq0q2UEaUgWIAlvy9TLd3+j59WnIXEE0Ud1pzJjI6PkGDLCOslXUiekAAAAASUVORK5CYII="
+        />
+        <motion.div
+          key={others.length}
+          initial={{ color: "rgba(255,0,0,1)" }}
+          animate={{ color: "rgba(255,255,255,1)" }}
+          transition={{ type: "tween", duration: 1.2 }}
+        >
+          {others.length + 1}
+        </motion.div>
+      </motion.div>
     </>
   );
 };
