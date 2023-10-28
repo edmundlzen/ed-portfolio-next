@@ -621,6 +621,15 @@ const Home: NextPage = () => {
                               </div>
                             );
                           })}
+                          {messages?.length === 0 ? (
+                            <div className="flex h-full items-center justify-center">
+                              <Text className="text-slate-500">
+                                No messages yet :(
+                              </Text>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                           <div ref={bottomChatRef} />
                         </div>
                       )}
@@ -646,7 +655,7 @@ const Home: NextPage = () => {
                         )}
                       </div>
                       <input
-                        className="h-full w-full rounded-full bg-slate-900 bg-opacity-100 p-2 px-4 font-mono outline-none transition-all focus:bg-opacity-80"
+                        className="h-full w-full rounded-full bg-slate-900 bg-opacity-100 p-2 px-4 font-mono shadow-sm outline-none transition-all focus:bg-opacity-80"
                         onFocus={() => {
                           updateMyPresence({
                             typing: true,
@@ -668,7 +677,7 @@ const Home: NextPage = () => {
                         }}
                       />
                       <button
-                        className="flex aspect-square h-full select-none items-center justify-center rounded-full bg-slate-900 p-3 transition-all hover:opacity-80 active:scale-95"
+                        className="flex aspect-square h-full select-none items-center justify-center rounded-full bg-slate-900 p-3 shadow-lg transition-all hover:opacity-80 active:scale-95"
                         onClick={() => onSendMessage(messageContent)}
                         disabled={status !== "connected"}
                         style={{
