@@ -344,7 +344,7 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">4 </span>
+                      <span className="text-slate-600">3 </span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
                         &quot;location&quot;:
@@ -355,7 +355,7 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">5 </span>
+                      <span className="text-slate-600">4 </span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
                         &quot;skills&quot;:
@@ -363,19 +363,19 @@ const Home: NextPage = () => {
                       <span className="text-slate-300">[</span>
                     </div>
                     <div>
-                      <span className="text-slate-600">6 </span>
+                      <span className="text-slate-600">5 </span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-orange-500">&quot;HTML&quot;</span>
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">7 </span>
+                      <span className="text-slate-600">6 </span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-blue-500">&quot;CSS&quot;</span>
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">8 </span>
+                      <span className="text-slate-600">7 </span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-yellow-300">
                         &quot;JavaScript&quot;
@@ -383,7 +383,7 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">9 </span>
+                      <span className="text-slate-600">8 </span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-blue-400">
                         &quot;TypeScript&quot;
@@ -391,7 +391,7 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">10</span>
+                      <span className="text-slate-600">9</span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-yellow-500">
                         &quot;Python&quot;
@@ -399,26 +399,26 @@ const Home: NextPage = () => {
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">11</span>
+                      <span className="text-slate-600">10</span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-sky-300">&quot;React JS&quot;</span>
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">12</span>
+                      <span className="text-slate-600">11</span>
                       <pre className="inline">{"    "}</pre>
                       <span className="text-green-600">
                         &quot;Node JS&quot;
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-600">13</span>
+                      <span className="text-slate-600">12</span>
                       <pre className="inline">{"   "}</pre>
                       <span className="text-slate-300">]</span>
                       {","}
                     </div>
                     <div>
-                      <span className="text-slate-600">14</span>
+                      <span className="text-slate-600">13</span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
                         &quot;pain&quot;:
@@ -426,7 +426,7 @@ const Home: NextPage = () => {
                       <span className="text-purple-500">true</span>
                     </div>
                     <div>
-                      <span className="text-slate-600">15</span>
+                      <span className="text-slate-600">14</span>
                       {" }"}
                     </div>
                   </div>
