@@ -412,30 +412,34 @@ const Test: NextPage = () => {
             />
           );
         })} */}
-          <div className="flex h-screen w-full flex-row flex-wrap items-start justify-start gap-x-4">
-            {Array.from(Array(120).keys()).map((i) => {
+          <div className="grid h-screen w-screen auto-rows-auto grid-cols-5 gap-2">
+            {Array.from(Array(80).keys()).map((i) => {
               if (!text) return null;
               return (
-                <TextMarqueeCanvas
-                  key={i}
-                  text={text as string}
-                  color={
-                    i % 4 === 0
-                      ? "r"
-                      : i % 4 === 1
-                      ? "g"
-                      : i % 4 === 2
-                      ? "y"
-                      : "w"
-                  }
-                  size={3}
-                  margin={0.5}
-                  speed={1}
-                  static
-                  widthTextOnly
-                  spacing={0}
-                  letterPixelSpacing={1}
-                />
+                <div key={i} className="flex items-center justify-center">
+                  <TextMarqueeCanvas
+                    text={
+                      text === "country"
+                        ? faker.location.country()
+                        : (text as string)
+                    }
+                    color={
+                      i % 4 === 0
+                        ? "r"
+                        : i % 4 === 1
+                        ? "g"
+                        : i % 4 === 2
+                        ? "y"
+                        : "w"
+                    }
+                    size={3}
+                    margin={0.5}
+                    speed={500}
+                    addSpaceAtEnd
+                    spacing={1.5}
+                    moveByWord
+                  />
+                </div>
               );
             })}
           </div>
