@@ -412,7 +412,7 @@ const Test: NextPage = () => {
             />
           );
         })} */}
-          <div className="grid h-screen w-screen auto-rows-auto grid-cols-5 gap-2">
+          <div className="grid h-screen w-screen auto-rows-auto grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
             {Array.from(Array(80).keys()).map((i) => {
               if (!text) return null;
               return (
