@@ -21,6 +21,15 @@ import moment from "moment";
 const FULL_TITLE = "Edmund's Portfolio";
 const CURSOR_COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
 
+function randomizeCursorColors() {
+  const colors = [...CURSOR_COLORS];
+  for (let i = colors.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [colors[i], colors[j]] = [colors[j], colors[i]];
+  }
+  return colors;
+}
+
 function useLiveCursors() {
   const updateMyPresence = useUpdateMyPresence();
 
@@ -421,7 +430,7 @@ const Home: NextPage = () => {
                       <span className="text-slate-600">13</span>
                       <pre className="inline">{"  "}</pre>
                       <span className="text-slate-400">
-                        &quot;pain&quot;:
+                        &quot;looking for a job&quot;:
                       </span>{" "}
                       <span className="text-purple-500">true</span>
                     </div>

@@ -413,7 +413,7 @@ const Test: NextPage = () => {
           );
         })} */}
           <div className="grid h-screen w-screen auto-rows-auto grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
-            {Array.from(Array(80).keys()).map((i) => {
+            {Array.from(Array(30).keys()).map((i) => {
               if (!text) return null;
               return (
                 <div key={i} className="flex items-center justify-center">
@@ -432,12 +432,11 @@ const Test: NextPage = () => {
                         ? "y"
                         : "w"
                     }
-                    size={3}
+                    size={5}
                     margin={0.5}
-                    speed={500}
+                    speed={50}
                     addSpaceAtEnd
-                    spacing={1.5}
-                    moveByWord
+                    spacing={0}
                   />
                 </div>
               );

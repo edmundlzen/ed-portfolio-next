@@ -81,7 +81,7 @@ const TrafficLight = (props: TrafficLightProps) => {
                   props.statusText.slice(1)}
               </span>
             </div>
-            <div className="absolute w-full animate-marquee2 whitespace-nowrap text-center">
+            <div className="w-full animate-marquee2 whitespace-nowrap text-center">
               <span
                 className={
                   "font-bold" +
