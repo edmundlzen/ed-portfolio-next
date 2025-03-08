@@ -500,7 +500,7 @@ const Home: NextPage = () => {
                   focusing on{" "}
                   <span className="font-bold text-indigo-500">School</span> .
                 </Text>
-                <div className="my-1 flex items-center justify-center gap-x-4">
+                <div className="my-1 mt-3 flex flex-col items-center justify-center gap-x-4">
                   <Tooltip label="Github">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
@@ -517,6 +517,19 @@ const Home: NextPage = () => {
                       />
                     </button>
                   </Tooltip>
+                  <div className="flex items-center justify-center">
+                    <button
+                      className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-[105%]"
+                      onClick={() => {
+                        window.open(
+                          "https://docs.google.com/viewer?url=https://docs.google.com/document/d/1PL_eM62rBrsTLmFrYzJprF-OIA3qGbY2ouU4v_JiXnY/export?format=pdf"
+                        );
+                      }}
+                    >
+                      <div className="absolute -z-10 h-8 w-32 animate-ping rounded-2xl bg-blue-500 opacity-90" />
+                      <span className="select-none">Download my resume</span>
+                    </button>
+                  </div>
                   {/* <Tooltip label="LinkedIn">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0274b3] transition-all hover:scale-125"
