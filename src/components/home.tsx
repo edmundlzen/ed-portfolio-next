@@ -498,7 +498,7 @@ const Home: NextPage = () => {
                   <br />I love to create things and I&apos;m always looking for
                   new opportunities to learn and grow!
                 </Text>
-                <div className="my-1 mt-3 flex flex-col items-center justify-center gap-x-4">
+                <div className="my-1 mt-3 flex items-center justify-center gap-x-4">
                   <Tooltip label="Email">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
