@@ -498,39 +498,41 @@ const Home: NextPage = () => {
                   <br />I love to create things and I&apos;m always looking for
                   new opportunities to learn and grow!
                 </Text>
-                <div className="my-1 mt-3 flex items-center justify-center gap-x-4">
-                  <Tooltip label="Email">
-                    <button
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
-                      onClick={() => {
-                        window.location.href = "mailto:edmundlzen@gmail.com";
-                      }}
-                    >
-                      <Image
-                        src="https://static.vecteezy.com/system/resources/thumbnails/006/827/459/small/email-icon-sign-symbol-logo-vector.jpg"
-                        alt="Email"
-                        className="invert"
-                        height={32}
-                        width={32}
-                      />
-                    </button>
-                  </Tooltip>
-                  <Tooltip label="Github">
-                    <button
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
-                      onClick={() => {
-                        window.open("https://github.com/edmundlzen");
-                      }}
-                    >
-                      <Image
-                        src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"
-                        alt="Github"
-                        className="invert"
-                        height={32}
-                        width={32}
-                      />
-                    </button>
-                  </Tooltip>
+                <div className="my-1 mt-3 flex flex-col items-center justify-center gap-x-4">
+                  <div className="flex items-center justify-center gap-x-4">
+                    <Tooltip label="Email">
+                      <button
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
+                        onClick={() => {
+                          window.location.href = "mailto:edmundlzen@gmail.com";
+                        }}
+                      >
+                        <Image
+                          src="https://static.vecteezy.com/system/resources/thumbnails/006/827/459/small/email-icon-sign-symbol-logo-vector.jpg"
+                          alt="Email"
+                          className="invert"
+                          height={32}
+                          width={32}
+                        />
+                      </button>
+                    </Tooltip>
+                    <Tooltip label="Github">
+                      <button
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
+                        onClick={() => {
+                          window.open("https://github.com/edmundlzen");
+                        }}
+                      >
+                        <Image
+                          src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"
+                          alt="Github"
+                          className="invert"
+                          height={32}
+                          width={32}
+                        />
+                      </button>
+                    </Tooltip>
+                  </div>
                   <div className="flex items-center justify-center">
                     <button
                       className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-[105%]"
