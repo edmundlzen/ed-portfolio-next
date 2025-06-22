@@ -507,7 +507,7 @@ const Home: NextPage = () => {
                       }}
                     >
                       <Image
-                        src="https://i.pinimg.com/736x/b8/a3/2d/b8a32d5bfb694e012dde03d2e6b90c9f.jpg"
+                        src="https://static.vecteezy.com/system/resources/thumbnails/006/827/459/small/email-icon-sign-symbol-logo-vector.jpg"
                         alt="Email"
                         className="invert"
                         height={32}
