@@ -496,11 +496,25 @@ const Home: NextPage = () => {
                   from Johor, Malaysia.
                   <br />
                   <br />I love to create things and I&apos;m always looking for
-                  new opportunities to learn and grow! Currently, I&apos;m
-                  focusing on{" "}
-                  <span className="font-bold text-indigo-500">School</span> .
+                  new opportunities to learn and grow!
                 </Text>
                 <div className="my-1 mt-3 flex flex-col items-center justify-center gap-x-4">
+                  <Tooltip label="Email">
+                    <button
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
+                      onClick={() => {
+                        window.location.href = "mailto:edmundlzen@gmail.com";
+                      }}
+                    >
+                      <Image
+                        src="https://i.pinimg.com/736x/b8/a3/2d/b8a32d5bfb694e012dde03d2e6b90c9f.jpg"
+                        alt="Email"
+                        className="invert"
+                        height={32}
+                        width={32}
+                      />
+                    </button>
+                  </Tooltip>
                   <Tooltip label="Github">
                     <button
                       className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
