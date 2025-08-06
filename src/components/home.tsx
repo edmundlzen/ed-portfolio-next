@@ -401,7 +401,7 @@ const Home: NextPage = () => {
                     </div>
                     <div>
                       <span className="text-slate-600">9</span>
-                      <pre className="inline">{"    "}</pre>
+                      <pre className="inline">{"     "}</pre>
                       <span className="text-yellow-500">
                         &quot;Python&quot;
                       </span>
