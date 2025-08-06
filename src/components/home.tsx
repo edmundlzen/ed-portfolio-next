@@ -537,9 +537,7 @@ const Home: NextPage = () => {
                     <button
                       className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-[105%]"
                       onClick={() => {
-                        window.open(
-                          "https://docs.google.com/viewer?url=https://docs.google.com/document/d/1PL_eM62rBrsTLmFrYzJprF-OIA3qGbY2ouU4v_JiXnY/export?format=pdf"
-                        );
+                        window.open("https://resume.edmundlzen.dev");
                       }}
                     >
                       <div className="absolute -z-10 h-8 w-32 animate-ping rounded-2xl bg-blue-500 opacity-90" />
