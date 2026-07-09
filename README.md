@@ -1,28 +1,65 @@
-# Create T3 App
+# Edmund's Portfolio
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A personal portfolio site for Edmund Lim, built with Next.js, that combines an animated, story-style hero with a project showcase and a real-time, multiplayer layer showing who else is currently browsing the site.
 
-## What's next? How do I make an app with this?
+## Key Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Multiplayer presence via Liveblocks** — every visitor is assigned a randomly generated name (via `faker-js`, localized to Chinese or English based on browser language) and rendered as a live, spring-animated cursor on other visitors' screens in real time, with a running count of how many people are currently on the page.
+- **Animated, parallax-driven hero section** — combines `react-scroll-parallax` and `react-parallax-mouse` with Framer Motion spring animations for a scroll- and mouse-reactive landing section, including a typewriter intro (`react-typing-effect`) and a rotating multilingual greeting ("Hi!", "你好！", "Apa khabar?", "வணக்கம்", "こんにちは", "안녕하세요").
+- **Project showcase** — a responsive grid of project cards, each with an auto-playing image/video carousel (`react-responsive-carousel`), a rich description, and a retro traffic-light style status indicator (live / in development / on hold / deprecated). Includes a "mystery" card teasing future projects.
+- **Image/video lightbox** — clicking any carousel item opens a full-screen modal with a download link for the asset.
+- **Dynamic Open Graph image generation** — `/api/dyn_images/home` uses `@vercel/og` on the Edge runtime to render a branded share-preview image on the fly, wired up as the `og:image` / `twitter:image` for link previews.
+- **Resume redirect** — a "Download my resume" button that opens a dedicated resume subdomain.
+- **Vercel Analytics** integration for lightweight, privacy-friendly visitor analytics.
+- **Experimental/hidden pages** — a `/spin` page (a spinning image over a looping YouTube embed) and a `/test/[text]` page rendering custom text on an LED dot-matrix-style display, driven by a hand-built pixel font (`src/res/letters.ts`).
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Tech Stack
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- **Framework:** [Next.js 13](https://nextjs.org/) (Pages Router) with TypeScript
+- **UI:** [Chakra UI](https://chakra-ui.com/), Tailwind CSS, Emotion
+- **Animation:** [Framer Motion](https://www.framer.com/motion/), `react-scroll-parallax`, `react-parallax-mouse`, `react-typing-effect`
+- **Real-time collaboration:** [Liveblocks](https://liveblocks.io/) (`@liveblocks/client`, `@liveblocks/react`) for shared presence and storage
+- **Media:** `react-responsive-carousel` for image/video carousels
+- **Dynamic images:** [`@vercel/og`](https://vercel.com/docs/functions/og-image-generation) for Edge-rendered Open Graph images
+- **Analytics:** `@vercel/analytics`
+- **Utilities:** `@faker-js/faker`, `moment`, `zod`
+- **Tooling:** ESLint, Prettier (with `prettier-plugin-tailwindcss`), PostCSS/Autoprefixer
 
-## Learn More
+## Setup / Run Locally
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+**Requirements:** Node.js and npm.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+1. Install dependencies:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+   ```bash
+   npm install
+   ```
 
-## How do I deploy this?
+2. Set up environment variables:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+   ```bash
+   cp .env.example .env
+   ```
+
+   Environment variables are validated on startup via `src/env.mjs` (using `zod`). No custom secrets are required to run the project locally beyond the standard Next.js environment.
+
+3. Run the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   The site will be available at [http://localhost:3000](http://localhost:3000).
+
+4. Build for production:
+
+   ```bash
+   npm run build
+   npm run start
+   ```
+
+Other available scripts:
+
+```bash
+npm run lint   # Run ESLint
+```
