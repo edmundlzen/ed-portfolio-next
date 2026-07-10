@@ -4,9 +4,13 @@
 
 html {
   scroll-behavior: smooth;
+  /* Decorative glows may extend past the viewport; never let them create
+     horizontal scroll or shrink full-bleed borders away from the edge */
+  overflow-x: clip;
 }
 
 body {
+  overflow-x: clip;
   background-color: #0b0d0c;
   color: #e4e9e4;
   -webkit-tap-highlight-color: transparent;
@@ -53,6 +57,20 @@ body {
   background-image: linear-gradient(rgba(228, 233, 228, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(228, 233, 228, 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
+}
+
+/* Soft fade when project card media changes */
+.media-fade {
+  animation: media-fade 0.3s ease;
+}
+
+@keyframes media-fade {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Oversized outlined section numerals */
