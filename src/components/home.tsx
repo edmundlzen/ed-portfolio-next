@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { Cursor, MysteryProjectCard, ProjectCard } from "~/components";
+import { Cursor, MysteryProjectCard, ProjectCard, Terminal } from "~/components";
 import { useOthers, useUpdateMyPresence } from "liveblocks.config";
 import { projects } from "~/data/projects";
 
@@ -269,7 +269,7 @@ function PresenceBadge() {
   );
 }
 
-function Nav() {
+function Nav({ onToggleTerminal }: { onToggleTerminal: () => void }) {
   return (
     <header className="fixed top-0 left-0 z-30 w-full border-b border-line bg-ink/80 backdrop-blur-md">
       <nav className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5">
@@ -293,6 +293,14 @@ function Nav() {
           >
             contact
           </a>
+          <button
+            onClick={onToggleTerminal}
+            title="open terminal (`)"
+            aria-label="Open terminal"
+            className="rounded border border-line px-1.5 py-0.5 font-mono text-xs text-muted transition-colors hover:border-accent/50 hover:text-accent"
+          >
+            &gt;_
+          </button>
           <PresenceBadge />
         </div>
       </nav>
@@ -367,12 +375,38 @@ const INFO_JSON_LINES: { indent: number; content: JSX.Element }[] = [
       <>
         <span className="text-muted">&quot;open_to_work&quot;</span>
         <span className="text-faint">: </span>
-        <span className="text-amber-300">true</span>
+        <OpenToWorkValue />
       </>
     ),
   },
   { indent: 0, content: <span className="text-faint">{"}"}</span> },
 ];
+
+// The one value on this site that refuses to be edited
+function OpenToWorkValue() {
+  const [denied, setDenied] = useState(false);
+
+  return (
+    <>
+      <button
+        className={
+          "cursor-pointer " + (denied ? "text-red-400" : "text-amber-300")
+        }
+        title="click me"
+        onClick={() => {
+          if (denied) return;
+          setDenied(true);
+          setTimeout(() => setDenied(false), 1600);
+        }}
+      >
+        {denied ? "false" : "true"}
+      </button>
+      {denied && (
+        <span className="media-fade text-faint"> {"// nice try"}</span>
+      )}
+    </>
+  );
+}
 
 function InfoJsonCard() {
   return (
@@ -728,16 +762,68 @@ function useConsoleEasterEgg() {
       "%c hey, you found the console ",
       "background:#6EE7A0;color:#0B0D0C;font-weight:bold;padding:4px 8px;border-radius:4px;",
       "\n\nReading the source? It's all here: https://github.com/edmundlzen" +
-        "\nAlso — open_to_work is set to true. edmundlzen@gmail.com\n"
+        "\nAlso — open_to_work is set to true. edmundlzen@gmail.com" +
+        "\n\npsst: press ` to open the terminal. and ↑↑↓↓←→←→BA does… something.\n"
     );
   }, []);
+}
+
+// ↑ ↑ ↓ ↓ ← → ← → B A
+function useKonami(onUnlock: () => void) {
+  useEffect(() => {
+    const SEQUENCE = [
+      "arrowup",
+      "arrowup",
+      "arrowdown",
+      "arrowdown",
+      "arrowleft",
+      "arrowright",
+      "arrowleft",
+      "arrowright",
+      "b",
+      "a",
+    ];
+    let index = 0;
+
+    function onKeyDown(event: KeyboardEvent) {
+      const key = event.key.toLowerCase();
+      index = key === SEQUENCE[index] ? index + 1 : key === SEQUENCE[0] ? 1 : 0;
+      if (index === SEQUENCE.length) {
+        index = 0;
+        onUnlock();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onUnlock]);
 }
 
 const Home: NextPage = () => {
   const cursors = useLiveCursors();
   const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+  const [terminalOpen, setTerminalOpen] = useState(false);
   useTerminalTitle();
   useConsoleEasterEgg();
+  useKonami(() => {
+    window.location.href = "/spin";
+  });
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement;
+      if (
+        event.key === "`" &&
+        target.tagName !== "INPUT" &&
+        target.tagName !== "TEXTAREA"
+      ) {
+        event.preventDefault();
+        setTerminalOpen((open) => !open);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <>
@@ -749,7 +835,7 @@ const Home: NextPage = () => {
         <Atmosphere />
         <Spotlight />
         <ScrollProgress />
-        <Nav />
+        <Nav onToggleTerminal={() => setTerminalOpen((open) => !open)} />
         <Hero />
         <Marquee />
         <Projects
@@ -758,6 +844,7 @@ const Home: NextPage = () => {
         <Contact />
       </main>
       <Lightbox media={lightbox} onClose={() => setLightbox(null)} />
+      <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} />
       {cursors.map(({ x, y, name, connectionId }) => (
         <Cursor
           key={connectionId}
