@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { Cursor, MysteryProjectCard, ProjectCard } from "~/components";
 import { useOthers, useUpdateMyPresence } from "liveblocks.config";
 import { projects } from "~/data/projects";
@@ -100,6 +100,105 @@ function useLiveCursors() {
   }
 
   return cursors;
+}
+
+// Layered background: masked grid + two soft accent glows. Static, so it
+// costs one paint — all the atmosphere of the old parallax without the lag.
+function Atmosphere() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="bg-grid absolute inset-x-0 top-0 h-[130vh] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_0%,black,transparent)]" />
+      <div className="absolute -top-48 right-[6%] h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-[140px]" />
+      <div className="absolute top-[28%] -left-48 h-[26rem] w-[26rem] rounded-full bg-accent/[0.06] blur-[120px]" />
+    </div>
+  );
+}
+
+// Cursor-following glow. Writes styles straight to the DOM behind rAF, so it
+// never triggers a React re-render.
+function Spotlight() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    let raf = 0;
+
+    function onPointerMove(event: PointerEvent) {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (ref.current) {
+          ref.current.style.background = `radial-gradient(34rem circle at ${event.clientX}px ${event.clientY}px, rgba(110,231,160,0.05), transparent 65%)`;
+        }
+      });
+    }
+
+    window.addEventListener("pointermove", onPointerMove);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return <div ref={ref} className="pointer-events-none fixed inset-0 z-0" />;
+}
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+
+  return (
+    <motion.div
+      style={{ scaleX: scrollYProgress }}
+      className="fixed top-0 left-0 right-0 z-50 h-0.5 origin-left bg-accent/80"
+    />
+  );
+}
+
+const MARQUEE_ITEMS = [
+  "TypeScript",
+  "JavaScript",
+  "Python",
+  "React",
+  "React Native",
+  "Next.js",
+  "Node.js",
+  "Firebase",
+];
+
+function Marquee() {
+  const items = [...MARQUEE_ITEMS, "open_to_work: true"];
+
+  return (
+    <div className="relative overflow-hidden border-y border-line bg-surface/40 py-3.5">
+      <div className="flex w-max animate-marquee-scroll">
+        {[0, 1].map((copy) => (
+          <div
+            key={copy}
+            aria-hidden={copy === 1}
+            className="flex shrink-0 items-center"
+          >
+            {items.map((item) => (
+              <span
+                key={item}
+                className="flex items-center font-mono text-xs uppercase tracking-widest"
+              >
+                <span
+                  className={
+                    item.startsWith("open_to_work") ? "text-accent" : "text-muted"
+                  }
+                >
+                  {item}
+                </span>
+                <span className="mx-6 select-none text-faint">✦</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-ink to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-ink to-transparent" />
+    </div>
+  );
 }
 
 function GreetingRotator() {
@@ -253,25 +352,35 @@ function InfoJsonCard() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: 0.35 }}
-      className="w-full max-w-sm overflow-hidden rounded-lg border border-line bg-surface shadow-2xl shadow-black/40"
+      className="relative w-full max-w-sm"
     >
-      <div className="flex items-center gap-2 border-b border-line bg-raised px-4 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
-        <span className="ml-2 font-mono text-xs text-muted">info.json</span>
-      </div>
-      <div className="p-4 font-mono text-[13px] leading-6">
-        {INFO_JSON_LINES.map((line, i) => (
-          <div key={i} className="flex">
-            <span className="w-6 shrink-0 select-none text-right text-faint/60">
-              {i + 1}
-            </span>
-            <span className="ml-3" style={{ paddingLeft: line.indent * 16 }}>
-              {line.content}
-            </span>
-          </div>
-        ))}
+      <div
+        aria-hidden
+        className="absolute -inset-8 -z-10 rounded-full bg-accent/[0.07] blur-3xl"
+      />
+      <div className="overflow-hidden rounded-lg border border-line bg-surface/90 shadow-2xl shadow-black/50 backdrop-blur-sm transition-transform duration-500 ease-out md:-rotate-2 md:hover:rotate-0">
+        <div
+          aria-hidden
+          className="h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent"
+        />
+        <div className="flex items-center gap-2 border-b border-line bg-raised px-4 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+          <span className="ml-2 font-mono text-xs text-muted">info.json</span>
+        </div>
+        <div className="p-4 font-mono text-[13px] leading-6">
+          {INFO_JSON_LINES.map((line, i) => (
+            <div key={i} className="flex">
+              <span className="w-6 shrink-0 select-none text-right text-faint/60">
+                {i + 1}
+              </span>
+              <span className="ml-3" style={{ paddingLeft: line.indent * 16 }}>
+                {line.content}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
@@ -329,7 +438,17 @@ function Hero() {
           transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
           className="font-serif text-6xl leading-none text-fg md:text-8xl"
         >
-          I&apos;m <span className="italic text-accent">Edmund</span>
+          I&apos;m{" "}
+          <span className="relative italic text-accent">
+            Edmund
+            <motion.span
+              aria-hidden
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.9 }}
+              className="absolute -bottom-2 left-0 h-[3px] w-full origin-left bg-gradient-to-r from-accent/0 via-accent/70 to-accent/0"
+            />
+          </span>
           <span className="text-faint">.</span>
         </motion.h1>
         <motion.p
@@ -432,7 +551,16 @@ function Projects({
   onMediaClick: (src: string, description: string) => void;
 }) {
   return (
-    <section id="projects" className="mx-auto w-full max-w-6xl px-5 py-24">
+    <section
+      id="projects"
+      className="relative mx-auto w-full max-w-6xl px-5 py-24"
+    >
+      <span
+        aria-hidden
+        className="ghost-number absolute right-5 top-10 hidden font-serif text-[11rem] leading-none md:block"
+      >
+        01
+      </span>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -466,14 +594,28 @@ function Contact() {
   const others = useOthers();
 
   return (
-    <section id="contact" className="border-t border-line">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-5 py-24">
+    <section id="contact" className="relative overflow-hidden border-t border-line">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-56 left-1/2 h-[28rem] w-[42rem] -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[120px]"
+      />
+      <span
+        aria-hidden
+        className="ghost-number absolute right-5 top-12 hidden font-serif text-[11rem] leading-none md:block"
+      >
+        02
+      </span>
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-5 py-24">
         <span className="font-mono text-xs uppercase tracking-widest text-accent">
           ## contact
         </span>
         <h2 className="font-serif text-5xl leading-tight text-fg md:text-7xl">
           Let&apos;s build <span className="italic">something</span>.
         </h2>
+        <p className="max-w-md text-muted">
+          Got a project, an opportunity, or just want to say one of the six
+          greetings above? My inbox is open.
+        </p>
         <a
           href={`mailto:${EMAIL}`}
           className="group flex items-center gap-2 font-mono text-lg text-muted transition-colors hover:text-accent md:text-2xl"
@@ -481,6 +623,14 @@ function Contact() {
           {EMAIL}
           <ArrowIcon />
         </a>
+        <div className="flex items-center gap-6 pt-2">
+          <HeroLink href={GITHUB_URL} label="github" />
+          <HeroLink href={RESUME_URL} label="résumé" />
+          <span className="flex items-center gap-1.5 font-mono text-xs text-faint">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+            open to work
+          </span>
+        </div>
       </div>
       <footer className="border-t border-line">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-5 py-6 font-mono text-xs text-faint sm:flex-row">
@@ -506,8 +656,12 @@ const Home: NextPage = () => {
         <meta name="description" content="Edmund's portfolio" />
       </Head>
       <main className="grain relative min-h-screen bg-ink">
+        <Atmosphere />
+        <Spotlight />
+        <ScrollProgress />
         <Nav />
         <Hero />
+        <Marquee />
         <Projects
           onMediaClick={(src, description) => setLightbox({ src, description })}
         />
