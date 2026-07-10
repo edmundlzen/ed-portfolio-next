@@ -107,7 +107,7 @@ const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
                 key={m.src}
                 aria-label={`Show media ${i + 1}: ${m.alt}`}
                 onClick={() => setMediaIndex(i)}
-                className="group/dot flex h-6 w-6 items-center justify-center"
+                className="group/dot flex h-6 w-3.5 items-center justify-center"
               >
                 <span
                   className={
