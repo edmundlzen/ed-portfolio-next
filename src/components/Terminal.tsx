@@ -37,6 +37,7 @@ export default function Terminal({
     { kind: "accent", text: "edmundlzen.dev — type `help` to get started." },
   ]);
   const [value, setValue] = useState("");
+  const [expanded, setExpanded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -56,22 +57,38 @@ export default function Terminal({
     const cmd = raw.trim().toLowerCase();
     print({ kind: "in", text: `$ ${raw.trim()}` });
 
+    if (cmd.startsWith("echo")) {
+      print({ kind: "out", text: raw.trim().slice(5) });
+      return;
+    }
+
     switch (cmd) {
       case "":
         break;
       case "help":
         print(
           { kind: "out", text: "available commands:" },
-          { kind: "out", text: "  whoami      who are you (and who am I)" },
-          { kind: "out", text: "  ls          look around" },
-          { kind: "out", text: "  cat info.json" },
-          { kind: "out", text: "  projects    jump to the projects" },
-          { kind: "out", text: "  github      open my github" },
-          { kind: "out", text: "  resume      open my résumé" },
-          { kind: "out", text: "  email       say hi" },
-          { kind: "out", text: "  sudo hire_me" },
-          { kind: "out", text: "  clear / exit" }
+          { kind: "out", text: "" },
+          { kind: "out", text: "  whoami         - who are you (and who am I)" },
+          { kind: "out", text: "  ls             - list files" },
+          { kind: "out", text: "  cat info.json  - about me, machine-readable" },
+          { kind: "out", text: "  projects       - jump to the projects" },
+          { kind: "out", text: "  github         - open my github" },
+          { kind: "out", text: "  resume         - open my résumé" },
+          { kind: "out", text: "  email          - say hi" },
+          { kind: "out", text: "  pwd            - where are we" },
+          { kind: "out", text: "  date           - what year is it" },
+          { kind: "out", text: "  echo <text>    - talk to yourself" },
+          { kind: "out", text: "  sudo hire_me   - do the right thing" },
+          { kind: "out", text: "  clear          - tidy up" },
+          { kind: "out", text: "  exit           - leave (why though)" }
         );
+        break;
+      case "pwd":
+        print({ kind: "out", text: "/home/edmund/portfolio" });
+        break;
+      case "date":
+        print({ kind: "out", text: new Date().toString() });
         break;
       case "whoami":
         print(
@@ -102,7 +119,10 @@ export default function Terminal({
       case "ls projects/":
       case "projects":
         projects.forEach((p) =>
-          print({ kind: "out", text: `  ${p.title}  [${p.status}]` })
+          print({
+            kind: "out",
+            text: `  ${(p.slug + "/").padEnd(28)}# ${p.kind}`,
+          })
         );
         if (cmd === "projects") {
           print({ kind: "accent", text: "taking you there…" });
@@ -175,29 +195,67 @@ export default function Terminal({
           transition={{ duration: 0.25, ease: "easeOut" }}
           className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-2xl overflow-hidden rounded-lg border border-line bg-raised/95 shadow-2xl shadow-black/60 backdrop-blur-md"
         >
-          <div className="flex items-center gap-2 border-b border-line bg-surface px-4 py-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
-            <span className="ml-2 font-mono text-xs text-muted">
-              guest@edmundlzen: ~
-            </span>
+          <div className="group/lights flex items-center gap-2 border-b border-line bg-surface px-4 py-2.5">
             <button
               onClick={onClose}
               aria-label="Close terminal"
-              className="ml-auto font-mono text-xs text-faint transition-colors hover:text-fg"
+              title="close"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-red-400/80 text-[8px] font-bold leading-none text-red-950 transition-transform hover:scale-110"
             >
-              esc ✕
+              <span className="opacity-0 group-hover/lights:opacity-100">
+                ×
+              </span>
             </button>
+            <button
+              onClick={() =>
+                print({
+                  kind: "out",
+                  text: "minimize: this window is already as humble as it gets.",
+                })
+              }
+              aria-label="Minimize (does nothing)"
+              title="minimize"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-amber-300/80 text-[8px] font-bold leading-none text-amber-950 transition-transform hover:scale-110"
+            >
+              <span className="opacity-0 group-hover/lights:opacity-100">
+                −
+              </span>
+            </button>
+            <button
+              onClick={() => setExpanded((e) => !e)}
+              aria-label="Toggle terminal size"
+              title="maximize"
+              className="flex h-3 w-3 items-center justify-center rounded-full bg-accent/80 text-[8px] font-bold leading-none text-emerald-950 transition-transform hover:scale-110"
+            >
+              <span className="opacity-0 group-hover/lights:opacity-100">
+                +
+              </span>
+            </button>
+            <span className="ml-2 font-mono text-xs text-muted">
+              guest@edmundlzen: ~
+            </span>
           </div>
           <div
             ref={scrollRef}
-            className="h-60 overflow-y-auto p-4 font-mono text-[13px] leading-6"
-            onClick={() => inputRef.current?.focus()}
+            className={
+              "overflow-y-auto p-4 font-mono text-[13px] leading-6 transition-[height] duration-300 " +
+              (expanded ? "h-[70vh]" : "h-60")
+            }
+            onClick={() => {
+              // don't steal focus while the visitor is selecting output
+              if (!window.getSelection()?.toString()) {
+                inputRef.current?.focus();
+              }
+            }}
           >
             {lines.map((line, i) => (
-              <div key={i} className={LINE_STYLES[line.kind]}>
-                {line.text}
+              <div
+                key={i}
+                className={
+                  "whitespace-pre-wrap break-words " + LINE_STYLES[line.kind]
+                }
+              >
+                {line.text || " "}
               </div>
             ))}
             <div className="flex items-center gap-2">
