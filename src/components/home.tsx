@@ -1,34 +1,38 @@
-import { Text, Tooltip } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { Parallax } from "react-scroll-parallax";
-import ReactTypingEffect from "react-typing-effect";
-import { MouseParallaxChild } from "react-parallax-mouse";
-import { motion, useInView } from "framer-motion";
-import { Cursor, MysteryProjectCard, ProjectCard } from "~/components";
-import {
-  useMutation,
-  useMyPresence,
-  useOthers,
-  useStatus,
-  useStorage,
-  useUpdateMyPresence,
-} from "liveblocks.config";
-import moment from "moment";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { Cursor, MysteryProjectCard, ProjectCard, Terminal } from "~/components";
+import { useOthers, useUpdateMyPresence } from "liveblocks.config";
+import { projects } from "~/data/projects";
 
-const FULL_TITLE = "Edmund's Portfolio";
-const CURSOR_COLORS = ["#DC2626", "#D97706", "#059669", "#7C3AED", "#DB2777"];
+const CURSOR_COLORS = ["#F87171", "#FBBF24", "#6EE7A0", "#A78BFA", "#F472B6"];
 
-// function randomizeCursorColors() {
-//   const colors = [...CURSOR_COLORS];
-//   for (let i = colors.length - 1; i > 0; i--) {
-//     const j = Math.floor(Math.random() * (i + 1));
-//     [colors[i], colors[j]] = [colors[j], colors[i]];
-//   }
-//   return colors;
-// }
+const GREETINGS = [
+  "Hi!",
+  "你好！",
+  "Apa khabar?",
+  "வணக்கம்",
+  "こんにちは",
+  "안녕하세요",
+];
+
+const EMAIL = "edmundlzen@gmail.com";
+const GITHUB_URL = "https://github.com/edmundlzen";
+const RESUME_URL = "https://resume.edmundlzen.dev";
+
+// Scroll to a section without writing a #hash into the URL — a stored hash
+// makes every reload auto-scroll back to that section.
+function scrollToSection(event: React.MouseEvent, id: string) {
+  event.preventDefault();
+  if (id === "top") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 function useLiveCursors() {
   const updateMyPresence = useUpdateMyPresence();
@@ -49,7 +53,6 @@ function useLiveCursors() {
     }
 
     function onPointerMove(event: PointerEvent) {
-      event.preventDefault();
       const position = {
         x: event.pageX,
         y: event.pageY,
@@ -111,121 +114,745 @@ function useLiveCursors() {
   return cursors;
 }
 
-const Home: NextPage = () => {
-  const [title, setTitle] = useState("_");
-  const [hiMotion, setHiMotion] = useState({
-    opacity: 0,
-    rotate: 0,
-    scale: 0,
-  });
-  const hiRef = useRef(null);
-  const hiIsInView = useInView(hiRef);
-  const hiTexts = [
-    "Hi!",
-    "你好！",
-    "Apa khabar?",
-    "வணக்கம்",
-    "こんにちは",
-    "안녕하세요",
-  ];
-  const [hiText, setHiText] = useState(hiTexts[0]);
-  const [imageModalHidden, setImageModalHidden] = useState(true);
-  const [imageModalSrc, setImageModalSrc] = useState("");
-  const [imageModalDescription, setImageModalDescription] = useState("");
-  const [imageModalOpacity, setImageModalOpacity] = useState(0);
-  const [messageContent, setMessageContent] = useState("");
-  const others = useOthers();
-  const cursors = useLiveCursors();
-  const [myPresence, updateMyPresence] = useMyPresence();
-  const messages = useStorage((root) => root.messages);
-  const status = useStatus();
-  const bottomChatRef = useRef(null);
+// Layered background: masked grid + two soft accent glows. Static, so it
+// costs one paint — all the atmosphere of the old parallax without the lag.
+function Atmosphere() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="bg-grid absolute inset-x-0 top-0 h-[130vh] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_0%,black,transparent)]" />
+      <div className="absolute -top-48 right-[6%] h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-[140px]" />
+      <div className="absolute top-[28%] -left-48 h-[26rem] w-[26rem] rounded-full bg-accent/[0.06] blur-[120px]" />
+    </div>
+  );
+}
+
+// Cursor-following glow. Writes styles straight to the DOM behind rAF, so it
+// never triggers a React re-render.
+function Spotlight() {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (bottomChatRef.current) {
-      (bottomChatRef.current as HTMLDivElement).scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    let raf = 0;
+
+    function onPointerMove(event: PointerEvent) {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (ref.current) {
+          ref.current.style.background = `radial-gradient(34rem circle at ${event.clientX}px ${event.clientY}px, rgba(110,231,160,0.05), transparent 65%)`;
+        }
       });
     }
-  }, [messages]);
+
+    window.addEventListener("pointermove", onPointerMove);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return <div ref={ref} className="pointer-events-none fixed inset-0 z-0" />;
+}
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+
+  return (
+    <motion.div
+      style={{ scaleX: scrollYProgress }}
+      className="fixed top-0 left-0 right-0 z-50 h-0.5 origin-left bg-accent/80"
+    />
+  );
+}
+
+const MARQUEE_ITEMS = [
+  "TypeScript",
+  "JavaScript",
+  "Python",
+  "React",
+  "React Native",
+  "Next.js",
+  "Node.js",
+  "Firebase",
+];
+
+function Marquee() {
+  const items = [...MARQUEE_ITEMS, "open_to_work: true"];
+
+  return (
+    <div className="relative overflow-hidden border-y border-line bg-surface/40 py-3.5">
+      <div className="flex w-max animate-marquee-scroll">
+        {[0, 1].map((copy) => (
+          <div
+            key={copy}
+            aria-hidden={copy === 1}
+            className="flex shrink-0 items-center"
+          >
+            {items.map((item) => (
+              <span
+                key={item}
+                className="flex items-center font-mono text-xs uppercase tracking-widest"
+              >
+                <span
+                  className={
+                    item.startsWith("open_to_work") ? "text-accent" : "text-muted"
+                  }
+                >
+                  {item}
+                </span>
+                <span className="mx-6 select-none text-faint">✦</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-ink to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-ink to-transparent" />
+    </div>
+  );
+}
+
+// Types each greeting out, holds, deletes it, moves to the next
+function useTypewriter(words: string[]) {
+  const [text, setText] = useState("");
 
   useEffect(() => {
+    let word = 0;
     let i = 0;
-    const interval = setInterval(() => {
-      if (i < FULL_TITLE.length) {
-        setTitle(FULL_TITLE.slice(0, i + 1) + "_");
+    let deleting = false;
+    let timer: number;
+
+    function tick() {
+      const chars = Array.from(words[word] ?? "");
+      if (!deleting) {
         i++;
+        setText(chars.slice(0, i).join(""));
+        if (i >= chars.length) {
+          deleting = true;
+          timer = window.setTimeout(tick, 1800);
+        } else {
+          timer = window.setTimeout(tick, 90);
+        }
       } else {
-        clearInterval(interval);
+        i--;
+        setText(chars.slice(0, i).join(""));
+        if (i <= 0) {
+          deleting = false;
+          word = (word + 1) % words.length;
+          timer = window.setTimeout(tick, 400);
+        } else {
+          timer = window.setTimeout(tick, 45);
+        }
       }
-    }, 100);
-  }, []);
-
-  useEffect(() => {
-    // Blink the cursor in the title
-    const interval = setInterval(() => {
-      setTitle((prev) => (prev.endsWith("_") ? prev.slice(0, -1) : prev + "_"));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (hiIsInView) {
-      setTimeout(() => {
-        setHiMotion({
-          opacity: 1,
-          rotate: 0,
-          scale: 1,
-        });
-      }, 150);
     }
-  }, [hiIsInView]);
+
+    timer = window.setTimeout(tick, 500);
+    return () => clearTimeout(timer);
+  }, [words]);
+
+  return text;
+}
+
+function GreetingRotator() {
+  const text = useTypewriter(GREETINGS);
+
+  return (
+    <div className="flex h-7 items-center gap-2 font-mono text-base text-accent">
+      <span className="select-none text-faint">$</span>
+      <span>{text}</span>
+      <span className="inline-block h-4 w-2 animate-blink bg-accent" />
+    </div>
+  );
+}
+
+function PresenceBadge() {
+  const others = useOthers();
+  const count = others.length + 1;
+
+  return (
+    <span className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 font-mono text-[11px] text-muted">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+      </span>
+      {count} online
+    </span>
+  );
+}
+
+function Nav({ onToggleTerminal }: { onToggleTerminal: () => void }) {
+  return (
+    <header className="fixed top-0 left-0 z-30 w-full border-b border-line bg-ink/80 backdrop-blur-md">
+      <nav className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5">
+        <a
+          href="#top"
+          onClick={(event) => scrollToSection(event, "top")}
+          className="font-mono text-sm text-fg"
+        >
+          <span className="text-accent">~/</span>edmundlzen
+          <span className="hidden text-muted sm:inline">
+            {" "}
+            git:(<span className="text-accent">main</span>)
+          </span>
+        </a>
+        <div className="flex items-center gap-5">
+          <a
+            href="#projects"
+            onClick={(event) => scrollToSection(event, "projects")}
+            className="hidden font-mono text-xs text-muted transition-colors hover:text-fg sm:block"
+          >
+            projects
+          </a>
+          <a
+            href="#contact"
+            onClick={(event) => scrollToSection(event, "contact")}
+            className="hidden font-mono text-xs text-muted transition-colors hover:text-fg sm:block"
+          >
+            contact
+          </a>
+          <button
+            onClick={onToggleTerminal}
+            title="open terminal (`)"
+            aria-label="Open terminal"
+            className="rounded border border-line px-1.5 py-0.5 font-mono text-xs text-muted transition-colors hover:border-accent/50 hover:text-accent"
+          >
+            &gt;_
+          </button>
+          <PresenceBadge />
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+const INFO_JSON_LINES: { indent: number; content: JSX.Element }[] = [
+  { indent: 0, content: <span className="text-faint">{"{"}</span> },
+  {
+    indent: 1,
+    content: (
+      <>
+        <span className="text-muted">&quot;name&quot;</span>
+        <span className="text-faint">: </span>
+        <span className="text-accent">&quot;Edmund&quot;</span>
+        <span className="text-faint">,</span>
+      </>
+    ),
+  },
+  {
+    indent: 1,
+    content: (
+      <>
+        <span className="text-muted">&quot;location&quot;</span>
+        <span className="text-faint">: </span>
+        <span className="text-accent">&quot;Johor, Malaysia&quot;</span>
+        <span className="text-faint">,</span>
+      </>
+    ),
+  },
+  {
+    indent: 1,
+    content: (
+      <>
+        <span className="text-muted">&quot;skills&quot;</span>
+        <span className="text-faint">: [</span>
+      </>
+    ),
+  },
+  {
+    indent: 2,
+    content: (
+      <>
+        <span className="text-accent/90">&quot;TypeScript&quot;</span>
+        <span className="text-faint">, </span>
+        <span className="text-accent/90">&quot;JavaScript&quot;</span>
+        <span className="text-faint">, </span>
+        <span className="text-accent/90">&quot;Python&quot;</span>
+        <span className="text-faint">,</span>
+      </>
+    ),
+  },
+  {
+    indent: 2,
+    content: (
+      <>
+        <span className="text-accent/90">&quot;React&quot;</span>
+        <span className="text-faint">, </span>
+        <span className="text-accent/90">&quot;Node.js&quot;</span>
+        <span className="text-faint">, </span>
+        <span className="text-accent/90">&quot;HTML&quot;</span>
+        <span className="text-faint">, </span>
+        <span className="text-accent/90">&quot;CSS&quot;</span>
+      </>
+    ),
+  },
+  { indent: 1, content: <span className="text-faint">],</span> },
+  {
+    indent: 1,
+    content: (
+      <>
+        <span className="text-muted">&quot;open_to_work&quot;</span>
+        <span className="text-faint">: </span>
+        <OpenToWorkValue />
+      </>
+    ),
+  },
+  { indent: 0, content: <span className="text-faint">{"}"}</span> },
+];
+
+// The one value on this site that refuses to be edited
+function OpenToWorkValue() {
+  const [denied, setDenied] = useState(false);
+
+  return (
+    <>
+      <button
+        className={
+          "cursor-pointer " + (denied ? "text-red-400" : "text-amber-300")
+        }
+        title="click me"
+        onClick={() => {
+          if (denied) return;
+          setDenied(true);
+          setTimeout(() => setDenied(false), 1600);
+        }}
+      >
+        {denied ? "false" : "true"}
+      </button>
+      {denied && (
+        <span className="media-fade text-faint"> {"// nice try"}</span>
+      )}
+    </>
+  );
+}
+
+function InfoJsonCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 0.35 }}
+      className="relative w-full max-w-sm"
+    >
+      <div
+        aria-hidden
+        className="absolute -inset-8 -z-10 rounded-full bg-accent/[0.07] blur-3xl"
+      />
+      <div className="overflow-hidden rounded-lg border border-line bg-surface/90 shadow-2xl shadow-black/50 backdrop-blur-sm transition-transform duration-500 ease-out md:-rotate-2 md:hover:rotate-0">
+        <div
+          aria-hidden
+          className="h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent"
+        />
+        <div className="flex items-center gap-2 border-b border-line bg-raised px-4 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+          <span className="ml-2 font-mono text-xs text-muted">info.json</span>
+        </div>
+        <div className="p-4 font-mono text-[13px] leading-6">
+          {INFO_JSON_LINES.map((line, i) => (
+            <div key={i} className="flex">
+              <span className="w-6 shrink-0 select-none text-right text-faint/60">
+                {i + 1}
+              </span>
+              <span className="ml-3" style={{ paddingLeft: line.indent * 16 }}>
+                {line.content}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+    >
+      <path d="M7 17L17 7M7 7h10v10" />
+    </svg>
+  );
+}
+
+function HeroLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith("mailto:") ? undefined : "_blank"}
+      rel="noreferrer"
+      className="group flex items-center gap-1.5 border-b border-transparent font-mono text-sm text-muted transition-colors hover:border-accent hover:text-accent"
+    >
+      {label}
+      <ArrowIcon />
+    </a>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      id="top"
+      className="mx-auto flex w-full max-w-6xl flex-col items-center gap-14 px-5 pt-36 pb-24 md:min-h-screen md:flex-row md:justify-between md:gap-8 md:pt-14 md:pb-0"
+    >
+      <div className="flex max-w-xl flex-col items-start gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <GreetingRotator />
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+          className="font-serif text-6xl leading-none text-fg md:text-8xl"
+        >
+          I&apos;m{" "}
+          <span className="relative italic text-accent">
+            Edmund
+            <motion.span
+              aria-hidden
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.9 }}
+              className="absolute -bottom-2 left-0 h-[3px] w-full origin-left bg-gradient-to-r from-accent/0 via-accent/70 to-accent/0"
+            />
+          </span>
+          <span className="text-faint">.</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+          className="text-lg leading-relaxed text-muted"
+        >
+          A student and developer from Johor, Malaysia. I love creating things
+          and I&apos;m always looking for new opportunities to learn and grow.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+          className="flex flex-wrap items-center gap-6 pt-2"
+        >
+          <HeroLink href={GITHUB_URL} label="github" />
+          <HeroLink href={`mailto:${EMAIL}`} label="email" />
+          <HeroLink href={RESUME_URL} label="résumé" />
+        </motion.div>
+        <motion.a
+          href="#projects"
+          onClick={(event) => scrollToSection(event, "projects")}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.4 }}
+          className="pt-6 font-mono text-xs text-faint transition-colors hover:text-muted"
+        >
+          {"// the good stuff is below "}
+          <span className="inline-block animate-bounce">↓</span>
+        </motion.a>
+      </div>
+      <InfoJsonCard />
+    </section>
+  );
+}
+
+interface LightboxState {
+  src: string;
+  description: string;
+}
+
+function Lightbox({
+  media,
+  onClose,
+}: {
+  media: LightboxState | null;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  return (
+    <AnimatePresence>
+      {media && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-ink/90 p-6 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.96, y: 8 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.96, y: 8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="relative flex max-h-[75vh] w-full max-w-3xl flex-1 items-center justify-center"
+          >
+            {media.src.endsWith(".webm") ? (
+              <video
+                src={media.src}
+                className="max-h-full max-w-full rounded-md"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            ) : (
+              <Image
+                src={media.src}
+                alt={media.description}
+                fill
+                className="rounded-md object-contain"
+              />
+            )}
+          </motion.div>
+          <p className="font-mono text-sm text-muted">{media.description}</p>
+          <button
+            className="font-mono text-xs text-faint transition-colors hover:text-fg"
+            onClick={onClose}
+          >
+            esc / click anywhere to close
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function Projects({
+  onMediaClick,
+}: {
+  onMediaClick: (src: string, description: string) => void;
+}) {
+  return (
+    <section
+      id="projects"
+      className="relative mx-auto w-full max-w-6xl px-5 py-24"
+    >
+      <span
+        aria-hidden
+        className="ghost-number absolute right-5 top-10 hidden font-serif text-[11rem] leading-none md:block"
+      >
+        01
+      </span>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        viewport={{ once: true }}
+        className="mb-10 flex flex-col gap-2"
+      >
+        <span className="font-mono text-xs uppercase tracking-widest text-accent">
+          ## selected work
+        </span>
+        <h2 className="font-serif text-5xl text-fg">Projects</h2>
+        <p className="text-muted">
+          Things I&apos;ve shipped, broken, or lovingly retired.
+        </p>
+      </motion.div>
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            onMediaClick={onMediaClick}
+          />
+        ))}
+        <MysteryProjectCard />
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  const others = useOthers();
+
+  return (
+    <section id="contact" className="relative overflow-hidden border-t border-line">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-56 left-1/2 h-[28rem] w-[42rem] -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[120px]"
+      />
+      <span
+        aria-hidden
+        className="ghost-number absolute right-5 top-12 hidden font-serif text-[11rem] leading-none md:block"
+      >
+        02
+      </span>
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-5 py-24">
+        <span className="font-mono text-xs uppercase tracking-widest text-accent">
+          ## contact
+        </span>
+        <h2 className="font-serif text-5xl leading-tight text-fg md:text-7xl">
+          Let&apos;s build <span className="italic">something</span>.
+        </h2>
+        <p className="max-w-md text-muted">
+          Got a project, an opportunity, or just want to say one of the six
+          greetings above? My inbox is open.
+        </p>
+        <a
+          href={`mailto:${EMAIL}`}
+          className="group flex items-center gap-2 font-mono text-lg text-muted transition-colors hover:text-accent md:text-2xl"
+        >
+          {EMAIL}
+          <ArrowIcon />
+        </a>
+        <div className="flex items-center gap-6 pt-2">
+          <HeroLink href={GITHUB_URL} label="github" />
+          <HeroLink href={RESUME_URL} label="résumé" />
+          <span className="flex items-center gap-1.5 font-mono text-xs text-faint">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+            open to work
+          </span>
+        </div>
+      </div>
+      <footer className="border-t border-line">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-5 py-6 font-mono text-xs text-faint sm:flex-row">
+          <span>© {new Date().getFullYear()} Edmund Lim</span>
+          <span className="hidden md:inline">
+            built with next.js, tailwind &amp; stubbornness
+          </span>
+          <span>
+            {others.length + 1} {others.length === 0 ? "person" : "people"}{" "}
+            here right now — wave your cursor!
+          </span>
+        </div>
+      </footer>
+    </section>
+  );
+}
+
+// Types the site name into the tab title, then leaves a blinking cursor —
+// a little callback to the old site. Waves goodbye when you tab away.
+function useTerminalTitle() {
+  useEffect(() => {
+    const FULL = "edmundlzen";
+    let i = 0;
+    let on = true;
+    let blink: number | undefined;
+
+    const type = window.setInterval(() => {
+      i++;
+      document.title = FULL.slice(0, i) + "_";
+      if (i >= FULL.length) {
+        window.clearInterval(type);
+        blink = window.setInterval(() => {
+          if (!document.hidden) {
+            on = !on;
+            document.title = FULL + (on ? "_" : " ");
+          }
+        }, 600);
+      }
+    }, 120);
+
+    function onVisibilityChange() {
+      if (document.hidden) document.title = "👋 come back — edmundlzen";
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(type);
+      if (blink) window.clearInterval(blink);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, []);
+}
+
+function useConsoleEasterEgg() {
+  useEffect(() => {
+    console.log(
+      "%c hey, you found the console ",
+      "background:#6EE7A0;color:#0B0D0C;font-weight:bold;padding:4px 8px;border-radius:4px;",
+      "\n\nReading the source? It's all here: https://github.com/edmundlzen" +
+        "\nAlso — open_to_work is set to true. edmundlzen@gmail.com" +
+        "\n\npsst: press ` to open the terminal. and ↑↑↓↓←→←→BA does… something.\n"
+    );
+  }, []);
+}
+
+// ↑ ↑ ↓ ↓ ← → ← → B A
+function useKonami(onUnlock: () => void) {
+  useEffect(() => {
+    const SEQUENCE = [
+      "arrowup",
+      "arrowup",
+      "arrowdown",
+      "arrowdown",
+      "arrowleft",
+      "arrowright",
+      "arrowleft",
+      "arrowright",
+      "b",
+      "a",
+    ];
+    let index = 0;
+
+    function onKeyDown(event: KeyboardEvent) {
+      const key = event.key.toLowerCase();
+      index = key === SEQUENCE[index] ? index + 1 : key === SEQUENCE[0] ? 1 : 0;
+      if (index === SEQUENCE.length) {
+        index = 0;
+        onUnlock();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onUnlock]);
+}
+
+const Home: NextPage = () => {
+  const cursors = useLiveCursors();
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  useTerminalTitle();
+  useConsoleEasterEgg();
+  useKonami(() => {
+    window.location.href = "/spin";
+  });
+
+  // Drop any section hash left in the URL so reloads start at the top
+  const router = useRouter();
+  useEffect(() => {
+    if (window.location.hash) {
+      void router.replace(window.location.pathname, undefined, {
+        shallow: true,
+        scroll: false,
+      });
+    }
+  }, [router]);
 
   useEffect(() => {
-    // if (!hiIsInView) return;
-    const interval = setInterval(() => {
-      setHiMotion({
-        opacity: 1,
-        rotate: 0,
-        scale: 0,
-      });
-      setTimeout(() => {
-        setHiText(
-          hiTexts[(hiTexts.indexOf(hiText as string) + 1) % hiTexts.length]
-        );
-        setHiMotion({
-          opacity: 1,
-          rotate: 0,
-          scale: 1,
-        });
-      }, 150);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [hiText, hiIsInView]);
-
-  const setImageModalVisible = () => {
-    setImageModalHidden(false);
-    setTimeout(() => {
-      setImageModalOpacity(1);
-    }, 0);
-  };
-
-  const setImageModalInvisible = () => {
-    setImageModalOpacity(0);
-    setTimeout(() => {
-      setImageModalHidden(true);
-    }, 300);
-  };
-
-  const onSendMessage = useMutation(({ storage }, message: string) => {
-    if (message.trim() === "") return;
-    storage.get("messages").push({
-      name: myPresence.name as string,
-      content: message,
-      timestamp: Date.now(),
-    });
-    setMessageContent("");
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement;
+      if (
+        event.key === "`" &&
+        target.tagName !== "INPUT" &&
+        target.tagName !== "TEXTAREA"
+      ) {
+        event.preventDefault();
+        setTerminalOpen((open) => !open);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   return (
@@ -233,654 +860,30 @@ const Home: NextPage = () => {
       <Head>
         <title>edmundlzen</title>
         <meta name="description" content="Edmund's portfolio" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-full flex-col items-start scroll-smooth bg-gradient-to-b from-[#040036] to-[#002022]">
-        <div className="min-w-screen absolute top-0 left-0 h-full min-h-screen w-full bg-[url(/images/grid.svg)] bg-repeat" />
-        <div
-          className={
-            "fixed top-0 left-0 z-10 flex h-full w-full flex-col items-center justify-center bg-black bg-opacity-80 p-3 backdrop-blur-sm transition-opacity" +
-            (imageModalHidden ? " hidden" : "")
-          }
-          style={{ opacity: imageModalOpacity }}
-          onClick={() => setImageModalInvisible()}
-        >
-          <div className="h-9/12 relative flex w-9/12 items-center justify-center overflow-hidden lg:h-1/2 lg:w-1/2">
-            {imageModalSrc.split(".").pop() === "webm" ? (
-              <video
-                src={imageModalSrc}
-                className="object-fit max-h-full max-w-full"
-                style={{
-                  borderRadius: "0.5px",
-                }}
-                autoPlay
-                loop
-                muted
-              />
-            ) : (
-              <Image
-                src={imageModalSrc}
-                alt={imageModalDescription}
-                fill
-                className="object-contain"
-              />
-            )}
-            {/* TODO: Fix this and make the image rounded */}
-          </div>
-          <div className="mt-4 flex flex-col items-center justify-center">
-            <Text className="text-md text-white">{imageModalDescription}</Text>
-          </div>
-          <a
-            className="text-md mt-2 font-semibold text-sky-400 underline"
-            href={imageModalSrc}
-            download
-          >
-            Download image
-          </a>
-        </div>
-        <div className="flex h-full w-full flex-col items-center justify-start">
-          <Parallax
-            speed={-10}
-            className="flex h-screen w-screen shrink-0 snap-start flex-col items-center justify-center text-4xl font-extrabold tracking-tight text-white"
-          >
-            <MouseParallaxChild factorX={0.1} factorY={0.1}>
-              <ReactTypingEffect
-                text={["Hi, I'm Edmund"]}
-                typingDelay={1000}
-                eraseDelay={1000 * 1000}
-                speed={50}
-                className="flex items-center justify-center"
-                displayTextRenderer={(text: string, i: number) => {
-                  return (
-                    <Text>
-                      {text.split("").map((char: string, i: number) => {
-                        const key = `${i}`;
-                        return <span key={key}>{char}</span>;
-                      })}
-                    </Text>
-                  );
-                }}
-              />
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  scale: 0,
-                  rotate: 180,
-                  translateY: 500,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                  rotate: 0,
-                  translateY: 0,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                  delay: 1.8,
-                }}
-              >
-                <div className="mt-8 w-72 rounded-lg border-[1px] border-black border-opacity-50 bg-slate-900 shadow-xl transition-all">
-                  <div className="h-8 w-full rounded-t-lg bg-slate-800">
-                    <div className="flex h-8 w-6/12 items-center rounded-t-lg border-2 border-slate-900 border-b-black border-opacity-25 bg-slate-900 px-2 font-mono text-sm">
-                      <div className="relative mr-1 h-1/2 w-1/5">
-                        <Image
-                          src={"/images/json.png"}
-                          fill
-                          objectFit="contain"
-                          alt="JSON Logo"
-                          className="invert"
-                        />
-                      </div>
-                      <Text className="font-semibold tracking-normal">
-                        info.json
-                      </Text>
-                    </div>
-                  </div>
-                  <div className="p-3 font-mono text-sm font-semibold tracking-normal">
-                    <div>
-                      <span className="text-slate-600">1 </span>
-                      {"{"}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">2 </span>
-                      <pre className="inline">{"  "}</pre>
-                      <span className="text-slate-400">
-                        &quot;name&quot;:
-                      </span>{" "}
-                      <span className="text-lime-400">&quot;Edmund&quot;</span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">3 </span>
-                      <pre className="inline">{"  "}</pre>
-                      <span className="text-slate-400">
-                        &quot;location&quot;:
-                      </span>{" "}
-                      <span className="text-lime-400">
-                        &quot;Malaysia&quot;
-                      </span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">4 </span>
-                      <pre className="inline">{"  "}</pre>
-                      <span className="text-slate-400">
-                        &quot;skills&quot;:
-                      </span>{" "}
-                      <span className="text-slate-300">[</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">5 </span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-orange-500">&quot;HTML&quot;</span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">6 </span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-blue-500">&quot;CSS&quot;</span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">7 </span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-yellow-300">
-                        &quot;JavaScript&quot;
-                      </span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">8 </span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-blue-400">
-                        &quot;TypeScript&quot;
-                      </span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">9</span>
-                      <pre className="inline">{"     "}</pre>
-                      <span className="text-yellow-500">
-                        &quot;Python&quot;
-                      </span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">10</span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-sky-300">&quot;React JS&quot;</span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">11</span>
-                      <pre className="inline">{"    "}</pre>
-                      <span className="text-green-600">
-                        &quot;Node JS&quot;
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">12</span>
-                      <pre className="inline">{"   "}</pre>
-                      <span className="text-slate-300">]</span>
-                      {","}
-                    </div>
-                    <div>
-                      <span className="text-slate-600">13</span>
-                      <pre className="inline">{"  "}</pre>
-                      <span className="text-slate-400">
-                        &quot;looking for a job&quot;:
-                      </span>{" "}
-                      <span className="text-purple-500">true</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">14</span>
-                      {" }"}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </MouseParallaxChild>
-          </Parallax>
-          <Parallax
-            speed={60}
-            className="flex min-h-screen snap-center flex-col items-center justify-center gap-y-5 px-4 text-center text-white "
-          >
-            <MouseParallaxChild factorX={0.1} factorY={0.1}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0, rotate: 180 }}
-                animate={{
-                  opacity: hiMotion.opacity,
-                  scale: hiMotion.scale,
-                  rotate: hiMotion.rotate,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                }}
-              >
-                <h1
-                  className="text-4xl font-extrabold tracking-tighter"
-                  ref={hiRef}
-                >
-                  {hiText}
-                </h1>
-              </motion.div>
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  scale: 0,
-                  rotate: 90,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  scale: 1,
-                  rotate: 0,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                  delay: 0.05,
-                }}
-                viewport={{ once: true }}
-                className="flex flex-col items-center justify-center"
-              >
-                <Text className="text-lg">
-                  My name is Edmund and I&apos;m a{" "}
-                  <span className="font-mono font-semibold text-yellow-300 underline">
-                    student
-                  </span>{" "}
-                  from Johor, Malaysia.
-                  <br />
-                  <br />I love to create things and I&apos;m always looking for
-                  new opportunities to learn and grow!
-                </Text>
-                <div className="my-1 mt-3 flex flex-col items-center justify-center gap-x-4">
-                  <div className="flex items-center justify-center gap-x-4">
-                    <Tooltip label="Email">
-                      <button
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
-                        onClick={() => {
-                          window.location.href = "mailto:edmundlzen@gmail.com";
-                        }}
-                      >
-                        <Image
-                          src="https://icon-library.com/images/e-mail-icon-png/e-mail-icon-png-27.jpg"
-                          alt="Email"
-                          className="invert"
-                          height={32}
-                          width={32}
-                        />
-                      </button>
-                    </Tooltip>
-                    <Tooltip label="Github">
-                      <button
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black transition-all hover:scale-125"
-                        onClick={() => {
-                          window.open("https://github.com/edmundlzen");
-                        }}
-                      >
-                        <Image
-                          src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg"
-                          alt="Github"
-                          className="invert"
-                          height={32}
-                          width={32}
-                        />
-                      </button>
-                    </Tooltip>
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <button
-                      className="relative mt-6 flex items-center justify-center gap-x-2 rounded-2xl bg-blue-700 px-4 py-2 text-lg font-semibold text-white transition-all hover:scale-[105%]"
-                      onClick={() => {
-                        window.open("https://resume.edmundlzen.dev");
-                      }}
-                    >
-                      <div className="absolute -z-10 h-8 w-32 animate-ping rounded-2xl bg-blue-500 opacity-90" />
-                      <span className="select-none">Download my resume</span>
-                    </button>
-                  </div>
-                  {/* <Tooltip label="LinkedIn">
-                    <button
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0274b3] transition-all hover:scale-125"
-                      onClick={() => {
-                        window.open("https://www.linkedin.com/in/nothx/");
-                      }}
-                    >
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
-                        alt="LinkedIn"
-                        className="h-8 w-8"
-                      />
-                    </button>
-                  </Tooltip> */}
-                </div>
-              </motion.div>
-            </MouseParallaxChild>
-          </Parallax>
-          <Parallax
-            speed={10}
-            className="flex min-h-screen snap-end flex-col items-center justify-start gap-y-5 px-4 text-center text-white "
-          >
-            <MouseParallaxChild factorX={0.1} factorY={0.1}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0, rotate: 180 }}
-                whileInView={{
-                  opacity: 1,
-                  scale: 1,
-                  rotate: 0,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                  delay: 0.1,
-                }}
-                viewport={{ once: true }}
-              >
-                <h1 className="mt-10 text-4xl font-extrabold tracking-tight md:mb-8 md:text-7xl">
-                  Projects
-                </h1>
-              </motion.div>
-              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <ProjectCard
-                  title="Scan & Go"
-                  status="live"
-                  carouselItems={[
-                    {
-                      src: "/projects/scan_and_go/scanner_demo.webm",
-                      alt: "QR Code Scanner Demo",
-                    },
-                    {
-                      src: "/projects/scan_and_go/auto_locate_demo.webm",
-                      alt: "Auto Locate closest store Demo",
-                    },
-                    {
-                      src: "/projects/scan_and_go/fast_checkout_demo.webm",
-                      alt: "Fast checkout via QR Code Demo",
-                    },
-                    {
-                      src: "/projects/scan_and_go/design.png",
-                      alt: "UI Design created in Lunacy",
-                    },
-                  ]}
-                  description={
-                    <>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; A cross-platform mobile app built using{" "}
-                        <span className="font-bold text-blue-400">
-                          react-native
-                        </span>{" "}
-                        &
-                        <span className="font-bold text-orange-500">
-                          {" "}
-                          firebase
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Allows shoppers to use their phones to scan items
-                        to <span className="text-green-400">check prices </span>
-                        and add them to a shopping cart for{" "}
-                        <span className="text-yellow-300">
-                          fast checkouts
-                        </span>{" "}
-                        by using QR Codes.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Freelance project
-                      </p>
-                    </>
-                  }
-                  onImageClick={(src: string, description: string) => {
-                    setImageModalSrc(src);
-                    setImageModalDescription(description);
-                    setImageModalVisible();
-                  }}
-                />
-                <ProjectCard
-                  title="Pinkfredor Music Player"
-                  status="deprecated"
-                  carouselItems={[
-                    {
-                      src: "/projects/pinkfredor_music_player/home.png",
-                      alt: "Home page",
-                    },
-                    {
-                      src: "/projects/pinkfredor_music_player/music_player.png",
-                      alt: "Music player interface",
-                    },
-                  ]}
-                  description={
-                    <>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; A web app built using{" "}
-                        <span className="font-bold text-sky-500">react</span> &{" "}
-                        <span className="font-bold text-orange-500">
-                          firebase
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Allows users to stream music from their{" "}
-                        <span className="text-yellow-300">Google Drive</span>{" "}
-                        account.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Collaboration project with developers{" "}
-                        <a
-                          href="https://github.com/benjaminthio"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-400"
-                        >
-                          @BenjaminThio
-                        </a>{" "}
-                        &{" "}
-                        <a
-                          href="https://github.com/Tiffceet"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-400"
-                        >
-                          @Tiffceet
-                        </a>{" "}
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; <span className="text-red-500">Deprecated</span>{" "}
-                        due to YouTube Music introducing self music file
-                        uploading.
-                      </p>
-                    </>
-                  }
-                  onImageClick={(src: string, description: string) => {
-                    setImageModalSrc(src);
-                    setImageModalDescription(description);
-                    setImageModalVisible();
-                  }}
-                />
-                <ProjectCard
-                  title="Healthcare System"
-                  status="live"
-                  carouselItems={[
-                    {
-                      src: "/projects/healthcare_system/home.png",
-                      alt: "Home",
-                    },
-                  ]}
-                  description={
-                    <>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; An android app built using{" "}
-                        <span className="font-bold text-green-500">
-                          Android SDK
-                        </span>{" "}
-                        &{" "}
-                        <span className="font-bold text-orange-500">
-                          firebase
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Helps end user{" "}
-                        <span className="text-pink-400">
-                          maintain their health
-                        </span>{" "}
-                        and{" "}
-                        <span className="text-purple-300">
-                          make appointments
-                        </span>{" "}
-                        with nutritionists.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Freelance project
-                      </p>
-                    </>
-                  }
-                  onImageClick={(src: string, description: string) => {
-                    setImageModalSrc(src);
-                    setImageModalDescription(description);
-                    setImageModalVisible();
-                  }}
-                />
-                <ProjectCard
-                  title="Jawab.my"
-                  status="on hold"
-                  carouselItems={[
-                    {
-                      src: "/projects/jawab_my/home.png",
-                      alt: "Home",
-                    },
-                    {
-                      src: "/projects/jawab_my/question_view.png",
-                      alt: "Question View",
-                    },
-                  ]}
-                  description={
-                    <>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; A web app built using{" "}
-                        <span className="font-bold text-blue-400">Next JS</span>{" "}
-                        &{" "}
-                        <span className="font-bold text-blue-300">
-                          TRPC + Prisma
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; An{" "}
-                        <span className="text-green-400">
-                          educational forum
-                        </span>{" "}
-                        where students can ask and get answers for their
-                        homework.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt;{" "}
-                        <span className="text-yellow-400">
-                          Pending redesign
-                        </span>
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Personal side project
-                      </p>
-                    </>
-                  }
-                  onImageClick={(src: string, description: string) => {
-                    setImageModalSrc(src);
-                    setImageModalDescription(description);
-                    setImageModalVisible();
-                  }}
-                />
-                <ProjectCard
-                  title="Causeway VTL Ticket Info"
-                  highlight
-                  status="deprecated"
-                  carouselItems={[
-                    {
-                      src: "/projects/causeway_vtl/messages_view.png",
-                      alt: "One of the messages of a successfully scraped ticket",
-                    },
-                  ]}
-                  description={
-                    <>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; A python bot + web scraper built using{" "}
-                        <span className="font-bold text-yellow-400">
-                          Python
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Scrapes Causeway Link&apos;s website for bus
-                        tickets and sends them to a telegram group.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Gives people a chance to buy tickets and go home
-                        despite the dreaded{" "}
-                        <span className="text-red-600">scalper bots</span>.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; At it&apos;s peak, had over{" "}
-                        <span className="font-black text-yellow-500">
-                          6,000 subscribers
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; <span className="text-red-500">Deprecated</span>{" "}
-                        after travel ban between SG & MY ended.
-                      </p>
-                      <p className="mt-1 text-sm text-gray-300">
-                        &gt; Personally my proudest & most successful side
-                        project.
-                      </p>
-                    </>
-                  }
-                  onImageClick={(src: string, description: string) => {
-                    setImageModalSrc(src);
-                    setImageModalDescription(description);
-                    setImageModalVisible();
-                  }}
-                />
-                <MysteryProjectCard />
-              </div>
-            </MouseParallaxChild>
-          </Parallax>
-        </div>
+      <main className="grain relative min-h-screen bg-ink">
+        <Atmosphere />
+        <Spotlight />
+        <ScrollProgress />
+        <Nav onToggleTerminal={() => setTerminalOpen((open) => !open)} />
+        <Hero />
+        <Marquee />
+        <Projects
+          onMediaClick={(src, description) => setLightbox({ src, description })}
+        />
+        <Contact />
       </main>
+      <Lightbox media={lightbox} onClose={() => setLightbox(null)} />
+      <Terminal open={terminalOpen} onClose={() => setTerminalOpen(false)} />
       {cursors.map(({ x, y, name, connectionId }) => (
         <Cursor
           key={connectionId}
-          color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length] || "red"}
+          color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length] || "#F87171"}
           name={name || "Anonymous"}
           x={x}
           y={y}
         />
       ))}
-      <motion.div
-        className="fixed bottom-3 left-3 flex h-5 items-center gap-x-2 font-mono text-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <img
-          className="h-5/6"
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABl0lEQVR4nO2Wv0oDQRCHY6FBNFErfQCxNDFYi71iJxa24kskWpigEUSUPISSYCfYWIldIsSHiPljKRKrfLIwgbjZ2btogk0+2GbvN7+5nZ3du0hkzJj/BlgHssAjUAfaMuoydwKkhplwB3ghPGVg+y8JV4AHfs89sDxo0j3g02HWBNJAEpiRsQZk5JnNB7AbJuEEcAp0HCZFIOaJjQElR5zxyhlvX9KCUraiGtjv4UpuuHZ6ABe4afpW6vCJAy3F69wWH6KTtrRTxgB4A2pA3sxZmiOP30FXlAC+PMKEZWoS2eQtjWk4jTawakQV/Pwos6zSpuZoNB8VI6qOILHZZx9VI9pUjk+XZIhSnw1Q6g6w0RVeeYQZR3PlZeVacx17/C5ts+chHac54F3xegIm7YAF4FUJKA1wgdwpHlVgXgtckq+LljwesFItaRlYDHrraeBWMWjJ5ZACZmWkZE+18t4Yz6Bq9ZZsXzk6YamJR+AW9SEXQc6zGq0q2UEaUgWIAlvy9TLd3+j59WnIXEE0Ud1pzJjI6PkGDLCOslXUiekAAAAASUVORK5CYII="
-        />
-        <motion.div
-          key={others.length}
-          initial={{ color: "rgba(255,0,0,1)" }}
-          animate={{ color: "rgba(255,255,255,1)" }}
-          transition={{ type: "tween", duration: 1.2 }}
-        >
-          {others.length + 1}
-        </motion.div>
-      </motion.div>
     </>
   );
 };

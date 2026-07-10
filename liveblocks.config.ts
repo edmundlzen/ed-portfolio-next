@@ -77,7 +77,10 @@ export const {
   useDeleteComment,
   useAddReaction,
   useRemoveReaction,
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent>(client, {
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent>(client);
+
+/* Comments resolvers (unused boilerplate) — newer Liveblocks moved these to
+   createClient options.
   async resolveUsers({ userIds }) {
     // Used only for Comments. Return a list of user information retrieved
     // from `userIds`. This info is used in comments, mentions etc.
@@ -114,4 +117,4 @@ export const {
 
     return [];
   },
-});
+*/
