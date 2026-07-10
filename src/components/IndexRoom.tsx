@@ -1,13 +1,54 @@
-"use client";
-
-import { faker as fakerZh } from "@faker-js/faker/locale/zh_TW";
-import { faker as fakerEn } from "@faker-js/faker/locale/en";
 import { ReactNode } from "react";
 import { RoomProvider } from "../../liveblocks.config";
 import { LiveList } from "@liveblocks/client";
 
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+// Tiny inline name generator — replaces the faker bundle that used to be
+// shipped to every visitor just to pick a random animal name.
+const EN_ADJECTIVES = [
+  "Swift",
+  "Quiet",
+  "Golden",
+  "Curious",
+  "Brave",
+  "Cosmic",
+  "Gentle",
+  "Lucky",
+  "Sneaky",
+  "Radiant",
+];
+const EN_ANIMALS = [
+  "Fox",
+  "Otter",
+  "Falcon",
+  "Panda",
+  "Koala",
+  "Lynx",
+  "Dolphin",
+  "Tiger",
+  "Capybara",
+  "Penguin",
+];
+const ZH_ADJECTIVES = [
+  "敏捷的",
+  "安靜的",
+  "好奇的",
+  "勇敢的",
+  "幸運的",
+  "溫柔的",
+  "閃亮的",
+];
+const ZH_ANIMALS = ["狐狸", "水獺", "熊貓", "老虎", "海豚", "企鵝", "貓頭鷹"];
+
+function pick<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)] as T;
+}
+
+function randomVisitorName() {
+  const isZh =
+    typeof navigator !== "undefined" && navigator.language.includes("zh");
+  return isZh
+    ? `${pick(ZH_ADJECTIVES)}${pick(ZH_ANIMALS)}`
+    : `${pick(EN_ADJECTIVES)} ${pick(EN_ANIMALS)}`;
 }
 
 export default function IndexRoom({ children }: { children: ReactNode }) {
@@ -16,17 +57,7 @@ export default function IndexRoom({ children }: { children: ReactNode }) {
       id="index-room"
       initialPresence={{
         cursor: null,
-        name: global.navigator
-          ? global.navigator.language.includes("zh")
-            ? capitalizeFirstLetter(fakerZh.word.adjective()) +
-              " " +
-              capitalizeFirstLetter(fakerZh.animal.type())
-            : capitalizeFirstLetter(fakerEn.word.adjective()) +
-              " " +
-              capitalizeFirstLetter(fakerEn.animal.type())
-          : capitalizeFirstLetter(fakerEn.word.adjective()) +
-            " " +
-            capitalizeFirstLetter(fakerEn.animal.type()),
+        name: randomVisitorName(),
         typing: false,
       }}
       initialStorage={{

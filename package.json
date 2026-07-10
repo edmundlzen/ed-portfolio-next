@@ -9,9 +9,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.5.1",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^8.2.0",
     "@liveblocks/client": "^1.5.2",
     "@liveblocks/react": "^1.5.2",
@@ -22,10 +19,6 @@
     "next": "^13.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-parallax-mouse": "^2.0.1",
-    "react-responsive-carousel": "^3.2.23",
-    "react-scroll-parallax": "^3.3.2",
-    "react-typing-effect": "^2.0.5",
     "zod": "^3.20.6"
   },
   "devDependencies": {
@@ -34,7 +27,6 @@
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
-    "@types/react-typing-effect": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
     "autoprefixer": "^10.4.7",
