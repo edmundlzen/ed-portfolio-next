@@ -1,214 +1,120 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ReactNode } from "react";
-import { Carousel } from "react-responsive-carousel";
+import { useState } from "react";
+import { type Project, type ProjectStatus } from "~/data/projects";
 
-interface projectCardProps {
-  title: string;
-  description: ReactNode;
-  status: "live" | "in development" | "on hold" | "deprecated";
-  carouselItems: {
-    src: string;
-    alt: string;
-  }[];
-  onImageClick?: (src: string, description: string) => void;
-  highlight?: boolean;
-}
-
-const ProjectCard = (props: projectCardProps) => {
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        scale: 0,
-        rotate: 180,
-      }}
-      whileInView={{
-        opacity: 1,
-        scale: 1,
-        rotate: 0,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-        delay: 0.1,
-      }}
-      viewport={{ once: true }}
-      className="h-full"
-    >
-      <div className="flex h-full flex-col rounded-t-lg shadow-lg">
-        <div>
-          <Carousel
-            showThumbs={false}
-            infiniteLoop
-            emulateTouch
-            autoPlay
-            interval={1000 * 12}
-            dynamicHeight
-            onClickItem={(index) => {
-              if (props.onImageClick) {
-                props.onImageClick(
-                  props.carouselItems[index]!.src,
-                  props.carouselItems[index]!.alt
-                );
-              }
-            }}
-          >
-            {props.carouselItems &&
-              props.carouselItems.map((item, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="relative h-64 w-full cursor-pointer overflow-hidden rounded-t-lg"
-                  >
-                    {item.src.split(".").pop() === "webm" ? (
-                      <video
-                        src={item.src}
-                        className="h-full object-cover"
-                        style={{
-                          borderRadius: "0.5px",
-                        }}
-                        autoPlay
-                        loop
-                        muted
-                      />
-                    ) : (
-                      <Image
-                        src={item.src}
-                        className="rounded-t-lg object-cover"
-                        fill
-                        alt={item.alt}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-          </Carousel>
-        </div>
-        <div className="flex-1 rounded-b-lg bg-slate-800 p-4 text-left font-mono">
-          <div className="relative inline-flex h-48 w-full flex-col items-center justify-end rounded-md bg-gray-900 py-3 shadow-md shadow-gray-900">
-            <div className="absolute top-0 left-0 h-full w-full bg-[url(/images/grid_card.svg)] bg-repeat" />
-            <span
-              className={
-                "flex flex-1 items-center justify-center py-3 text-center font-mono text-3xl font-bold" +
-                (props.highlight ? " text-yellow-100" : " text-gray-100")
-              }
-              style={{
-                animation: props.highlight
-                  ? "glow 1s ease-in-out infinite alternate"
-                  : "",
-              }}
-            >
-              {props.title}
-            </span>
-            <TrafficLight
-              status={
-                props.status === "live"
-                  ? "green"
-                  : props.status === "in development"
-                  ? "yellow"
-                  : props.status === "on hold"
-                  ? "yellow"
-                  : "red"
-              }
-              statusText={props.status}
-            />
-          </div>
-          <div className="mt-3">{props.description}</div>
-        </div>
-      </div>
-    </motion.div>
-  );
+const STATUS_STYLES: Record<ProjectStatus, { dot: string; text: string }> = {
+  live: { dot: "bg-accent", text: "text-accent" },
+  "in development": { dot: "bg-amber-400", text: "text-amber-400" },
+  "on hold": { dot: "bg-amber-400", text: "text-amber-400" },
+  deprecated: { dot: "bg-red-400/80", text: "text-red-400/90" },
 };
 
-interface TrafficLightProps {
-  status: "red" | "yellow" | "green";
-  statusText: string;
+interface ProjectCardProps {
+  project: Project;
+  onMediaClick?: (src: string, description: string) => void;
 }
 
-const TrafficLight = (props: TrafficLightProps) => {
+const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
+  const [mediaIndex, setMediaIndex] = useState(0);
+  const media = project.media[mediaIndex] ?? project.media[0];
+  const status = STATUS_STYLES[project.status];
+
   return (
-    <div className="relative inline-flex w-full flex-col items-center justify-center gap-y-2">
-      <div className="absolute flex h-5/6 w-8 items-center justify-center border-2 border-gray-500" />
-      <div className="relative inline-flex w-full items-center justify-center gap-x-4">
-        <div className="absolute flex h-1 w-full items-center justify-center border-2 border-dotted border-gray-600" />
-        <div className="z-10 flex h-8 w-fit gap-x-2 rounded-md border border-gray-800 bg-slate-900 p-1 shadow-lg">
-          <div className="relative flex w-28 items-center justify-center overflow-hidden rounded-sm bg-black py-2 text-sm shadow-inner shadow-gray-700">
-            <div className="w-full animate-marquee whitespace-nowrap text-center">
-              <span
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      viewport={{ once: true, margin: "-40px" }}
+      className={
+        "group flex h-full flex-col overflow-hidden rounded-lg border bg-surface " +
+        (project.highlight ? "border-accent/40" : "border-line")
+      }
+    >
+      <div className="relative aspect-video w-full overflow-hidden border-b border-line bg-ink">
+        {media && (
+          <button
+            className="absolute inset-0 h-full w-full cursor-zoom-in"
+            aria-label={`Enlarge: ${media.alt}`}
+            onClick={() => onMediaClick?.(media.src, media.alt)}
+          >
+            {media.src.endsWith(".webm") ? (
+              <video
+                key={media.src}
+                src={media.src}
+                className="h-full w-full object-cover object-top"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+              />
+            ) : (
+              <Image
+                src={media.src}
+                alt={media.alt}
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              />
+            )}
+          </button>
+        )}
+        {project.media.length > 1 && (
+          <div className="absolute bottom-2 right-2 flex gap-1.5 rounded-full bg-ink/70 px-2 py-1.5 backdrop-blur-sm">
+            {project.media.map((m, i) => (
+              <button
+                key={m.src}
+                aria-label={`Show media ${i + 1}: ${m.alt}`}
+                onClick={() => setMediaIndex(i)}
                 className={
-                  "font-bold" +
-                  {
-                    red: " text-red-600",
-                    yellow: " text-yellow-400",
-                    green: " text-green-500",
-                  }[props.status]
+                  "h-1.5 w-1.5 rounded-full transition-colors " +
+                  (i === mediaIndex ? "bg-accent" : "bg-faint hover:bg-muted")
                 }
-              >
-                {props.statusText.slice(0, 1).toUpperCase() +
-                  props.statusText.slice(1)}
-              </span>
-            </div>
-            <div className="absolute w-full animate-marquee2 whitespace-nowrap text-center">
-              <span
-                className={
-                  "font-bold" +
-                  {
-                    red: " text-red-600",
-                    yellow: " text-yellow-400",
-                    green: " text-green-500",
-                  }[props.status]
-                }
-              >
-                {props.statusText.slice(0, 1).toUpperCase() +
-                  props.statusText.slice(1)}
-              </span>
-            </div>
+              />
+            ))}
           </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className="flex items-center justify-between gap-2">
+          <span
+            className={`flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest ${status.text}`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${status.dot} ${
+                project.status === "live" ? "animate-pulse" : ""
+              }`}
+            />
+            {project.status}
+          </span>
+          {project.highlight && (
+            <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
+              ★ proudest
+            </span>
+          )}
+        </div>
+        <h3 className="font-serif text-2xl text-fg">{project.title}</h3>
+        <ul className="flex flex-col gap-1.5 text-sm leading-relaxed text-muted">
+          {project.points.map((point) => (
+            <li key={point} className="flex gap-2">
+              <span className="select-none text-faint">–</span>
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
+          {project.tech.map((tech) => (
+            <span
+              key={tech}
+              className="rounded border border-line px-1.5 py-0.5 font-mono text-[11px] text-muted"
+            >
+              {tech}
+            </span>
+          ))}
         </div>
       </div>
-      <div className="relative inline-flex w-full items-center justify-center gap-x-4">
-        {/* <div className="absolute flex h-1 w-full items-center justify-center border-2 border-dotted border-gray-600" /> */}
-        <div className="z-10 flex h-8 w-fit items-center justify-center gap-x-2 rounded-full border border-gray-700 bg-slate-900 p-2 shadow-lg">
-          {/* <div className="flex items-center justify-center">
-              Status:&nbsp;{props.status}
-            </div> */}
-          {
-            {
-              deprecated: (
-                <>
-                  <div className="h-4 w-4 rounded-full bg-red-600 shadow-inner shadow-red-300" />
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                </>
-              ),
-              "in development": (
-                <>
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                  <div className="h-4 w-4 rounded-full bg-yellow-400 shadow-inner shadow-yellow-100" />
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                </>
-              ),
-              "on hold": (
-                <>
-                  <div className="h-4 w-4 rounded-full bg-red-600 shadow-inner shadow-red-300" />
-                  <div className="h-4 w-4 rounded-full bg-yellow-400 shadow-inner shadow-yellow-100" />
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                </>
-              ),
-              live: (
-                <>
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                  <div className="h-4 w-4 rounded-full bg-gray-700 shadow-inner shadow-gray-300" />
-                  <div className="h-4 w-4 rounded-full bg-green-500 shadow-inner shadow-green-100" />
-                </>
-              ),
-            }[props.statusText]
-          }
-        </div>
-      </div>
-    </div>
+    </motion.article>
   );
 };
 
