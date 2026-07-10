@@ -106,7 +106,9 @@ export default function Terminal({
         );
         if (cmd === "projects") {
           print({ kind: "accent", text: "taking you there…" });
-          window.location.hash = "#projects";
+          document
+            .getElementById("projects")
+            ?.scrollIntoView({ behavior: "smooth" });
         }
         break;
       case "github":

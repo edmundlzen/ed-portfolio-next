@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { Cursor, MysteryProjectCard, ProjectCard, Terminal } from "~/components";
@@ -21,6 +22,17 @@ const GREETINGS = [
 const EMAIL = "edmundlzen@gmail.com";
 const GITHUB_URL = "https://github.com/edmundlzen";
 const RESUME_URL = "https://resume.edmundlzen.dev";
+
+// Scroll to a section without writing a #hash into the URL — a stored hash
+// makes every reload auto-scroll back to that section.
+function scrollToSection(event: React.MouseEvent, id: string) {
+  event.preventDefault();
+  if (id === "top") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 function useLiveCursors() {
   const updateMyPresence = useUpdateMyPresence();
@@ -273,7 +285,11 @@ function Nav({ onToggleTerminal }: { onToggleTerminal: () => void }) {
   return (
     <header className="fixed top-0 left-0 z-30 w-full border-b border-line bg-ink/80 backdrop-blur-md">
       <nav className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5">
-        <a href="#top" className="font-mono text-sm text-fg">
+        <a
+          href="#top"
+          onClick={(event) => scrollToSection(event, "top")}
+          className="font-mono text-sm text-fg"
+        >
           <span className="text-accent">~/</span>edmundlzen
           <span className="hidden text-muted sm:inline">
             {" "}
@@ -283,12 +299,14 @@ function Nav({ onToggleTerminal }: { onToggleTerminal: () => void }) {
         <div className="flex items-center gap-5">
           <a
             href="#projects"
+            onClick={(event) => scrollToSection(event, "projects")}
             className="hidden font-mono text-xs text-muted transition-colors hover:text-fg sm:block"
           >
             projects
           </a>
           <a
             href="#contact"
+            onClick={(event) => scrollToSection(event, "contact")}
             className="hidden font-mono text-xs text-muted transition-colors hover:text-fg sm:block"
           >
             contact
@@ -534,6 +552,7 @@ function Hero() {
         </motion.div>
         <motion.a
           href="#projects"
+          onClick={(event) => scrollToSection(event, "projects")}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1.4 }}
@@ -808,6 +827,17 @@ const Home: NextPage = () => {
   useKonami(() => {
     window.location.href = "/spin";
   });
+
+  // Drop any section hash left in the URL so reloads start at the top
+  const router = useRouter();
+  useEffect(() => {
+    if (window.location.hash) {
+      void router.replace(window.location.pathname, undefined, {
+        shallow: true,
+        scroll: false,
+      });
+    }
+  }, [router]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
