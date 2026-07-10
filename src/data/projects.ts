@@ -1,5 +1,3 @@
-export type ProjectStatus = "live" | "in development" | "on hold" | "deprecated";
-
 export interface ProjectMedia {
   src: string;
   alt: string;
@@ -8,18 +6,17 @@ export interface ProjectMedia {
 export interface Project {
   slug: string;
   title: string;
-  status: ProjectStatus;
+  kind: string;
   points: string[];
   tech: string[];
   media: ProjectMedia[];
-  highlight?: boolean;
 }
 
 export const projects: Project[] = [
   {
     slug: "scan-and-go",
     title: "Scan & Go",
-    status: "live",
+    kind: "mobile app",
     points: [
       "Cross-platform mobile app that lets shoppers scan items to check prices and build a cart for fast QR-code checkouts.",
       "Freelance project.",
@@ -47,7 +44,7 @@ export const projects: Project[] = [
   {
     slug: "pinkfredor-music-player",
     title: "Pinkfredor Music Player",
-    status: "deprecated",
+    kind: "web app",
     points: [
       "Web app for streaming music straight from your own Google Drive.",
       "Built together with @BenjaminThio and @Tiffceet.",
@@ -68,7 +65,7 @@ export const projects: Project[] = [
   {
     slug: "healthcare-system",
     title: "Healthcare System",
-    status: "live",
+    kind: "android app",
     points: [
       "Android app that helps users maintain their health and book appointments with nutritionists.",
       "Freelance project.",
@@ -84,7 +81,7 @@ export const projects: Project[] = [
   {
     slug: "jawab-my",
     title: "Jawab.my",
-    status: "on hold",
+    kind: "web app",
     points: [
       "Educational forum where students can ask and answer homework questions.",
       "Personal side project, pending a redesign.",
@@ -104,8 +101,7 @@ export const projects: Project[] = [
   {
     slug: "causeway-vtl",
     title: "Causeway VTL Ticket Info",
-    status: "deprecated",
-    highlight: true,
+    kind: "telegram bot",
     points: [
       "Python bot + scraper that watched Causeway Link for bus tickets and pinged a Telegram group — giving real people a fighting chance against scalper bots.",
       "Over 6,000 subscribers at its peak; retired when the SG–MY travel ban ended.",

@@ -1,14 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { type Project, type ProjectStatus } from "~/data/projects";
-
-const STATUS_STYLES: Record<ProjectStatus, { dot: string; text: string }> = {
-  live: { dot: "bg-accent", text: "text-accent" },
-  "in development": { dot: "bg-amber-400", text: "text-amber-400" },
-  "on hold": { dot: "bg-amber-400", text: "text-amber-400" },
-  deprecated: { dot: "bg-red-400/80", text: "text-red-400/90" },
-};
+import { type Project } from "~/data/projects";
 
 interface ProjectCardProps {
   project: Project;
@@ -18,7 +11,6 @@ interface ProjectCardProps {
 const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
   const [mediaIndex, setMediaIndex] = useState(0);
   const media = project.media[mediaIndex] ?? project.media[0];
-  const status = STATUS_STYLES[project.status];
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const justSwiped = useRef(false);
 
@@ -53,12 +45,7 @@ const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
       whileHover={{ y: -6 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       viewport={{ once: true, margin: "-40px" }}
-      className={
-        "group flex h-full flex-col overflow-hidden rounded-lg border bg-surface transition-[border-color,box-shadow] duration-300 hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.8)] " +
-        (project.highlight
-          ? "border-accent/40 hover:border-accent/70 hover:shadow-[0_16px_48px_-16px_rgba(110,231,160,0.25)]"
-          : "border-line hover:border-fg/25")
-      }
+      className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface transition-[border-color,box-shadow] duration-300 hover:border-fg/25 hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.8)]"
     >
       <div
         className="relative aspect-video w-full touch-pan-y overflow-hidden border-b border-line bg-ink"
@@ -123,22 +110,14 @@ const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-center justify-between gap-2">
-          <span
-            className={`flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest ${status.text}`}
-          >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${status.dot} ${
-                project.status === "live" ? "animate-pulse" : ""
-              }`}
-            />
-            {project.status}
+        <div className="flex items-center justify-between gap-2 font-mono text-[11px]">
+          <span className="truncate text-faint">
+            <span className="text-accent/70">~/projects/</span>
+            {project.slug}
           </span>
-          {project.highlight && (
-            <span className="font-mono text-[11px] uppercase tracking-widest text-accent">
-              ★ proudest
-            </span>
-          )}
+          <span className="shrink-0 uppercase tracking-widest text-muted">
+            {project.kind}
+          </span>
         </div>
         <h3 className="font-serif text-2xl text-fg">{project.title}</h3>
         <ul className="flex flex-col gap-1.5 text-sm leading-relaxed text-muted">
