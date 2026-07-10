@@ -24,11 +24,14 @@ const ProjectCard = ({ project, onMediaClick }: ProjectCardProps) => {
     <motion.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -6 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       viewport={{ once: true, margin: "-40px" }}
       className={
-        "group flex h-full flex-col overflow-hidden rounded-lg border bg-surface " +
-        (project.highlight ? "border-accent/40" : "border-line")
+        "group flex h-full flex-col overflow-hidden rounded-lg border bg-surface transition-[border-color,box-shadow] duration-300 hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.8)] " +
+        (project.highlight
+          ? "border-accent/40 hover:border-accent/70 hover:shadow-[0_16px_48px_-16px_rgba(110,231,160,0.25)]"
+          : "border-line hover:border-fg/25")
       }
     >
       <div className="relative aspect-video w-full overflow-hidden border-b border-line bg-ink">

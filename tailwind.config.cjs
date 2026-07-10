@@ -20,6 +20,7 @@ const config = {
       },
       animation: {
         blink: "blink 1.1s step-end infinite",
+        "marquee-scroll": "marquee-scroll 40s linear infinite",
         marquee: "marquee 10s linear infinite",
         marquee2: "marquee2 10s linear infinite",
         bg: "bg 20s ease-in-out infinite",
@@ -28,6 +29,10 @@ const config = {
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
+        },
+        "marquee-scroll": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
         marquee: {
           "0%": { transform: "translateX(0%)" },
