@@ -201,30 +201,54 @@ function Marquee() {
   );
 }
 
-function GreetingRotator() {
-  const [index, setIndex] = useState(0);
+// Types each greeting out, holds, deletes it, moves to the next
+function useTypewriter(words: string[]) {
+  const [text, setText] = useState("");
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % GREETINGS.length);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
+    let word = 0;
+    let i = 0;
+    let deleting = false;
+    let timer: number;
+
+    function tick() {
+      const chars = Array.from(words[word] ?? "");
+      if (!deleting) {
+        i++;
+        setText(chars.slice(0, i).join(""));
+        if (i >= chars.length) {
+          deleting = true;
+          timer = window.setTimeout(tick, 1800);
+        } else {
+          timer = window.setTimeout(tick, 90);
+        }
+      } else {
+        i--;
+        setText(chars.slice(0, i).join(""));
+        if (i <= 0) {
+          deleting = false;
+          word = (word + 1) % words.length;
+          timer = window.setTimeout(tick, 400);
+        } else {
+          timer = window.setTimeout(tick, 45);
+        }
+      }
+    }
+
+    timer = window.setTimeout(tick, 500);
+    return () => clearTimeout(timer);
+  }, [words]);
+
+  return text;
+}
+
+function GreetingRotator() {
+  const text = useTypewriter(GREETINGS);
 
   return (
     <div className="flex h-7 items-center gap-2 font-mono text-base text-accent">
       <span className="select-none text-faint">$</span>
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={GREETINGS[index]}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-        >
-          {GREETINGS[index]}
-        </motion.span>
-      </AnimatePresence>
+      <span>{text}</span>
       <span className="inline-block h-4 w-2 animate-blink bg-accent" />
     </div>
   );
@@ -251,6 +275,10 @@ function Nav() {
       <nav className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5">
         <a href="#top" className="font-mono text-sm text-fg">
           <span className="text-accent">~/</span>edmundlzen
+          <span className="hidden text-muted sm:inline">
+            {" "}
+            git:(<span className="text-accent">main</span>)
+          </span>
         </a>
         <div className="flex items-center gap-5">
           <a
@@ -470,6 +498,16 @@ function Hero() {
           <HeroLink href={`mailto:${EMAIL}`} label="email" />
           <HeroLink href={RESUME_URL} label="résumé" />
         </motion.div>
+        <motion.a
+          href="#projects"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.4 }}
+          className="pt-6 font-mono text-xs text-faint transition-colors hover:text-muted"
+        >
+          {"// the good stuff is below "}
+          <span className="inline-block animate-bounce">↓</span>
+        </motion.a>
       </div>
       <InfoJsonCard />
     </section>
@@ -635,6 +673,9 @@ function Contact() {
       <footer className="border-t border-line">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-5 py-6 font-mono text-xs text-faint sm:flex-row">
           <span>© {new Date().getFullYear()} Edmund Lim</span>
+          <span className="hidden md:inline">
+            built with next.js, tailwind &amp; stubbornness
+          </span>
           <span>
             {others.length + 1} {others.length === 0 ? "person" : "people"}{" "}
             here right now — wave your cursor!
@@ -645,9 +686,58 @@ function Contact() {
   );
 }
 
+// Types the site name into the tab title, then leaves a blinking cursor —
+// a little callback to the old site. Waves goodbye when you tab away.
+function useTerminalTitle() {
+  useEffect(() => {
+    const FULL = "edmundlzen";
+    let i = 0;
+    let on = true;
+    let blink: number | undefined;
+
+    const type = window.setInterval(() => {
+      i++;
+      document.title = FULL.slice(0, i) + "_";
+      if (i >= FULL.length) {
+        window.clearInterval(type);
+        blink = window.setInterval(() => {
+          if (!document.hidden) {
+            on = !on;
+            document.title = FULL + (on ? "_" : " ");
+          }
+        }, 600);
+      }
+    }, 120);
+
+    function onVisibilityChange() {
+      if (document.hidden) document.title = "👋 come back — edmundlzen";
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(type);
+      if (blink) window.clearInterval(blink);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, []);
+}
+
+function useConsoleEasterEgg() {
+  useEffect(() => {
+    console.log(
+      "%c hey, you found the console ",
+      "background:#6EE7A0;color:#0B0D0C;font-weight:bold;padding:4px 8px;border-radius:4px;",
+      "\n\nReading the source? It's all here: https://github.com/edmundlzen" +
+        "\nAlso — open_to_work is set to true. edmundlzen@gmail.com\n"
+    );
+  }, []);
+}
+
 const Home: NextPage = () => {
   const cursors = useLiveCursors();
   const [lightbox, setLightbox] = useState<LightboxState | null>(null);
+  useTerminalTitle();
+  useConsoleEasterEgg();
 
   return (
     <>
