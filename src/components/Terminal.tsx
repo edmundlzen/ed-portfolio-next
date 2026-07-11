@@ -8,6 +8,8 @@ interface TermLine {
 }
 
 const EMAIL = "edmundlzen@gmail.com";
+const RESUME_FULL = "/resume/Edmund_Resume.pdf";
+const RESUME_SIMPLE = "/resume/Edmund_Resume_Simple.pdf";
 
 const INFO_JSON = `{
   "name": "Edmund",
@@ -74,7 +76,7 @@ export default function Terminal({
           { kind: "out", text: "  cat info.json  - about me, machine-readable" },
           { kind: "out", text: "  projects       - jump to the projects" },
           { kind: "out", text: "  github         - open my github" },
-          { kind: "out", text: "  resume         - open my résumé" },
+          { kind: "out", text: "  resume         - open my résumé ('resume simple' for the printable one)" },
           { kind: "out", text: "  email          - say hi" },
           { kind: "out", text: "  pwd            - where are we" },
           { kind: "out", text: "  date           - what year is it" },
@@ -102,7 +104,7 @@ export default function Terminal({
       case "ls":
         print({
           kind: "out",
-          text: "projects/   info.json   resume.pdf   secrets/",
+          text: "projects/   info.json   resume/   secrets/",
         });
         break;
       case "ls secrets":
@@ -135,10 +137,29 @@ export default function Terminal({
         print({ kind: "accent", text: "opening github…" });
         window.open("https://github.com/edmundlzen");
         break;
+      case "ls resume":
+      case "ls resume/":
+        print(
+          { kind: "out", text: "  full.pdf       # fancy, for screens" },
+          { kind: "out", text: "  simple.pdf     # plain, for printers" }
+        );
+        break;
       case "resume":
+      case "resume full":
+      case "cat resume/full.pdf":
+        print({ kind: "accent", text: "opening résumé (full)…" });
+        window.open(RESUME_FULL);
+        break;
+      case "resume simple":
+      case "cat resume/simple.pdf":
+        print({ kind: "accent", text: "opening résumé (print-friendly)…" });
+        window.open(RESUME_SIMPLE);
+        break;
       case "cat resume.pdf":
-        print({ kind: "accent", text: "opening résumé…" });
-        window.open("https://resume.edmundlzen.dev");
+        print(
+          { kind: "out", text: "resume.pdf: moved to resume/ — opening full.pdf" }
+        );
+        window.open(RESUME_FULL);
         break;
       case "email":
       case "contact":

@@ -21,7 +21,19 @@ const GREETINGS = [
 
 const EMAIL = "edmundlzen@gmail.com";
 const GITHUB_URL = "https://github.com/edmundlzen";
-const RESUME_URL = "https://resume.edmundlzen.dev";
+
+const RESUME_FILES = [
+  {
+    name: "full.pdf",
+    href: "/resume/Edmund_Resume.pdf",
+    note: "# fancy, for screens",
+  },
+  {
+    name: "simple.pdf",
+    href: "/resume/Edmund_Resume_Simple.pdf",
+    note: "# plain, for printers",
+  },
+];
 
 // Scroll to a section without writing a #hash into the URL — a stored hash
 // makes every reload auto-scroll back to that section.
@@ -498,6 +510,100 @@ function HeroLink({ href, label }: { href: string; label: string }) {
   );
 }
 
+// The résumé "link" is really a picker — two files live in ~/resume/, so it
+// expands into a small directory listing. Opens upward in the contact
+// section, which sits at the bottom of the page.
+function ResumeMenu({ direction = "down" }: { direction?: "up" | "down" }) {
+  const [open, setOpen] = useState(false);
+  // Horizontal offset that keeps the panel inside the viewport — on narrow
+  // screens the trigger can sit close enough to the right edge to clip it.
+  const [shift, setShift] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const rect = wrapRef.current?.getBoundingClientRect();
+    if (rect) {
+      const PANEL_WIDTH = 240; // w-60
+      const MARGIN = 12;
+      const clampedLeft = Math.min(
+        Math.max(rect.left, MARGIN),
+        Math.max(window.innerWidth - MARGIN - PANEL_WIDTH, MARGIN)
+      );
+      setShift(clampedLeft - rect.left);
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className={`flex items-center gap-1.5 border-b font-mono text-sm transition-colors hover:border-accent hover:text-accent ${
+          open ? "border-accent text-accent" : "border-transparent text-muted"
+        }`}
+      >
+        résumé
+        {/* points where the menu will open; flips while it's open */}
+        <span
+          aria-hidden
+          className={`text-[10px] transition-transform duration-200 ${
+            open === (direction === "down") ? "rotate-180" : ""
+          }`}
+        >
+          ▾
+        </span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <>
+            <div
+              aria-hidden
+              className="fixed inset-0 z-40"
+              onClick={() => setOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: direction === "down" ? -8 : 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: direction === "down" ? -8 : 8 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              style={{ left: shift }}
+              className={`absolute z-50 w-60 overflow-hidden rounded-lg border border-line bg-surface shadow-2xl shadow-black/60 ${
+                direction === "down" ? "top-full mt-3" : "bottom-full mb-3"
+              }`}
+            >
+              <div className="h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+              {RESUME_FILES.map((file) => (
+                <a
+                  key={file.name}
+                  href={file.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setOpen(false)}
+                  className="group flex flex-col gap-0.5 px-4 py-2.5 font-mono text-xs transition-colors hover:bg-raised"
+                >
+                  <span className="text-muted transition-colors group-hover:text-accent">
+                    <span className="text-accent/70">~/resume/</span>
+                    {file.name}
+                  </span>
+                  <span className="text-faint">{file.note}</span>
+                </a>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section
@@ -548,7 +654,7 @@ function Hero() {
         >
           <HeroLink href={GITHUB_URL} label="github" />
           <HeroLink href={`mailto:${EMAIL}`} label="email" />
-          <HeroLink href={RESUME_URL} label="résumé" />
+          <ResumeMenu />
         </motion.div>
         <motion.a
           href="#projects"
@@ -716,7 +822,7 @@ function Contact() {
         </a>
         <div className="flex items-center gap-6 pt-2">
           <HeroLink href={GITHUB_URL} label="github" />
-          <HeroLink href={RESUME_URL} label="résumé" />
+          <ResumeMenu direction="up" />
           <span className="flex items-center gap-1.5 font-mono text-xs text-faint">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
             open to work
