@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -9,6 +10,9 @@ const FULL_RESUME = {
   href: "/resume/Edmund_Resume.pdf",
   download: "Edmund_Resume.pdf",
   note: "# fancy, for screens",
+  // Pre-rendered with PDFium (scratchpad render-pdfium.mjs) — the PDF plugin
+  // rasterizes the fancy gradients on every scroll frame and lags badly.
+  preview: { src: "/resume/preview/full-1.webp", width: 1186, height: 1678 },
 };
 
 const RESUME_FILES = [
@@ -18,6 +22,7 @@ const RESUME_FILES = [
     href: "/resume/Edmund_Resume_Simple.pdf",
     download: "Edmund_Resume_Simple.pdf",
     note: "# plain, for printers",
+    preview: { src: "/resume/preview/simple-1.webp", width: 1190, height: 1684 },
   },
 ];
 
@@ -144,29 +149,19 @@ const ResumePage: NextPage = () => {
                 </a>
               </div>
             </div>
-            {/* key remounts the viewer when the tab changes — plugins don't
-                react to a data prop update */}
-            <object
-              key={active.href}
-              data={`${active.href}#toolbar=0&navpanes=0`}
-              type="application/pdf"
-              aria-label={`resume preview — ${active.name}`}
-              className="media-fade h-[72vh] min-h-[26rem] w-full bg-raised"
-            >
-              {/* Rendered where inline PDFs aren't supported (most phones) */}
-              <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-                <p className="font-mono text-xs text-faint">
-                  {"// no inline pdf viewer here — grab the file instead"}
-                </p>
-                <a
-                  href={active.href}
-                  download={active.download}
-                  className="rounded border border-line px-4 py-2 font-mono text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent"
-                >
-                  download {active.name} ↓
-                </a>
-              </div>
-            </object>
+            <div className="h-[72vh] min-h-[26rem] overflow-y-auto bg-raised">
+              {/* key restarts the cross-fade when the tab changes */}
+              <Image
+                key={active.preview.src}
+                src={active.preview.src}
+                width={active.preview.width}
+                height={active.preview.height}
+                alt={`resume preview — ${active.name}`}
+                sizes="(max-width: 896px) 100vw, 864px"
+                priority
+                className="media-fade h-auto w-full"
+              />
+            </div>
           </motion.div>
 
           <motion.div {...entrance(0.4)} className="mt-8 font-mono text-xs leading-relaxed">
