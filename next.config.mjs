@@ -20,6 +20,18 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  // resume.edmundlzen.dev is an alias for /resume — the subdomain points at
+  // this same deployment, so route it by Host header.
+  async redirects() {
+    return [
+      {
+        source: "/",
+        has: [{ type: "host", value: "resume.edmundlzen.dev" }],
+        destination: "https://edmundlzen.dev/resume",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
