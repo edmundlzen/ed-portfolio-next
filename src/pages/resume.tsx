@@ -150,18 +150,28 @@ const ResumePage: NextPage = () => {
                 </a>
               </div>
             </div>
-            <div className="h-[72vh] min-h-[26rem] overflow-y-auto bg-raised">
-              {/* key restarts the cross-fade when the tab changes */}
-              <Image
-                key={active.preview.src}
-                src={active.preview.src}
-                width={active.preview.width}
-                height={active.preview.height}
-                alt={`resume preview — ${active.name}`}
-                sizes="(max-width: 896px) 100vw, 864px"
-                priority
-                className="media-fade h-auto w-full"
-              />
+            <div className="flex h-[72vh] min-h-[26rem] overflow-y-auto bg-raised p-3 sm:p-5">
+              {/* m-auto centers the page when it's shorter than the pane
+                  (mobile) without clipping the top when it's taller */}
+              <a
+                href={active.href}
+                target="_blank"
+                rel="noreferrer"
+                title="open in new tab"
+                className="m-auto block w-full"
+              >
+                {/* key restarts the cross-fade when the tab changes */}
+                <Image
+                  key={active.preview.src}
+                  src={active.preview.src}
+                  width={active.preview.width}
+                  height={active.preview.height}
+                  alt={`resume preview — ${active.name}`}
+                  sizes="(max-width: 896px) 100vw, 824px"
+                  priority
+                  className="media-fade h-auto w-full ring-1 ring-line"
+                />
+              </a>
             </div>
           </motion.div>
 
