@@ -100,9 +100,10 @@ const ResumePage: NextPage = () => {
             className="mt-8 overflow-hidden rounded-lg border border-line bg-surface shadow-2xl shadow-black/60"
           >
             <div className="h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
-            <div className="flex items-center justify-between border-b border-line bg-raised px-4">
+            <div className="flex items-center justify-between border-b border-line bg-raised px-3 sm:px-4">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
+                {/* decorative — first thing to go when width is scarce */}
+                <div className="hidden items-center gap-1.5 sm:flex">
                   <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
@@ -112,7 +113,7 @@ const ResumePage: NextPage = () => {
                     <button
                       key={file.name}
                       onClick={() => setActive(file)}
-                      className={`border-b-2 px-3 py-3 font-mono text-xs transition-colors ${
+                      className={`whitespace-nowrap border-b-2 px-2.5 py-3 font-mono text-xs transition-colors sm:px-3 ${
                         active.name === file.name
                           ? "border-accent text-fg"
                           : "border-transparent text-faint hover:text-muted"
@@ -142,7 +143,7 @@ const ResumePage: NextPage = () => {
                 <a
                   href={active.href}
                   download={active.download}
-                  className="group my-2 flex items-center gap-1.5 rounded border border-line px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent"
+                  className="group my-2 flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded border border-line px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent"
                 >
                   download
                   <span className="transition-transform group-hover:translate-y-0.5">↓</span>

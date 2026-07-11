@@ -14,13 +14,13 @@ const OUT = path.join(ROOT, "public", "resume", "preview");
 await mkdir(OUT, { recursive: true });
 
 const FILES = [
-  ["full", "Edmund_Resume.pdf"],
-  ["simple", "Edmund_Resume_Simple.pdf"],
+  { slug: "full", filename: "Edmund_Resume.pdf" },
+  { slug: "simple", filename: "Edmund_Resume_Simple.pdf" },
 ];
 
 const library = await PDFiumLibrary.init();
 
-for (const [slug, filename] of FILES) {
+for (const { slug, filename } of FILES) {
   const pdfPath = path.join(ROOT, "public", "resume", filename);
   const doc = await library.loadDocument(await readFile(pdfPath));
   let n = 0;
