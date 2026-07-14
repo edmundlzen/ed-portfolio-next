@@ -8,7 +8,8 @@ interface TermLine {
 }
 
 const EMAIL = "edmundlzen@gmail.com";
-const RESUME_FULL = "/resume/Edmund_Resume.pdf";
+// The fancy build (/resume/Edmund_Resume.pdf) still exists in public/ but is
+// intentionally not surfaced here for now.
 const RESUME_SIMPLE = "/resume/Edmund_Resume_Simple.pdf";
 
 const INFO_JSON = `{
@@ -76,7 +77,7 @@ export default function Terminal({
           { kind: "out", text: "  cat info.json  - about me, machine-readable" },
           { kind: "out", text: "  projects       - jump to the projects" },
           { kind: "out", text: "  github         - open my github" },
-          { kind: "out", text: "  resume         - open my résumé ('resume simple' for the printable one)" },
+          { kind: "out", text: "  resume         - open my résumé" },
           { kind: "out", text: "  email          - say hi" },
           { kind: "out", text: "  pwd            - where are we" },
           { kind: "out", text: "  date           - what year is it" },
@@ -139,27 +140,19 @@ export default function Terminal({
         break;
       case "ls resume":
       case "ls resume/":
-        print(
-          { kind: "out", text: "  full.pdf       # fancy, for screens" },
-          { kind: "out", text: "  simple.pdf     # plain, for printers" }
-        );
+        print({ kind: "out", text: "  simple.pdf     # plain, for printers" });
         break;
       case "resume":
-      case "resume full":
-      case "cat resume/full.pdf":
-        print({ kind: "accent", text: "opening résumé (full)…" });
-        window.open(RESUME_FULL);
-        break;
       case "resume simple":
       case "cat resume/simple.pdf":
-        print({ kind: "accent", text: "opening résumé (print-friendly)…" });
+        print({ kind: "accent", text: "opening résumé…" });
         window.open(RESUME_SIMPLE);
         break;
       case "cat resume.pdf":
         print(
-          { kind: "out", text: "resume.pdf: moved to resume/ — opening full.pdf" }
+          { kind: "out", text: "resume.pdf: moved to resume/ — opening simple.pdf" }
         );
-        window.open(RESUME_FULL);
+        window.open(RESUME_SIMPLE);
         break;
       case "email":
       case "contact":

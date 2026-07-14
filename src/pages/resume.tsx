@@ -2,29 +2,18 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { motion } from "framer-motion";
 
-const FULL_RESUME = {
-  name: "full.pdf",
-  href: "/resume/Edmund_Resume.pdf",
-  download: "Edmund_Resume.pdf",
-  note: "# fancy, for screens",
+// The fancy build (Edmund_Resume.pdf + preview/full-1.webp) still lives in
+// public/resume/ but is intentionally not linked anywhere for now.
+const RESUME = {
+  name: "resume.pdf",
+  href: "/resume/Edmund_Resume_Simple.pdf",
+  download: "Edmund_Resume_Simple.pdf",
   // Pre-rendered with PDFium (scratchpad render-pdfium.mjs) — the PDF plugin
-  // rasterizes the fancy gradients on every scroll frame and lags badly.
-  preview: { src: "/resume/preview/full-1.webp", width: 1186, height: 1678 },
+  // rasterizes on every scroll frame and lags badly.
+  preview: { src: "/resume/preview/simple-1.webp", width: 1190, height: 1684 },
 };
-
-const RESUME_FILES = [
-  FULL_RESUME,
-  {
-    name: "simple.pdf",
-    href: "/resume/Edmund_Resume_Simple.pdf",
-    download: "Edmund_Resume_Simple.pdf",
-    note: "# plain, for printers",
-    preview: { src: "/resume/preview/simple-1.webp", width: 1190, height: 1684 },
-  },
-];
 
 const entrance = (delay: number) => ({
   initial: { opacity: 0, y: 16 },
@@ -65,13 +54,11 @@ function Nav() {
 }
 
 const ResumePage: NextPage = () => {
-  const [active, setActive] = useState(FULL_RESUME);
-
   return (
     <>
       <Head>
         <title>edmundlzen — resume</title>
-        <meta name="description" content="Edmund's resume — fancy and printer-friendly versions" />
+        <meta name="description" content="Edmund's resume — view online or download" />
       </Head>
       <main className="grain relative min-h-screen bg-ink">
         <Atmosphere />
@@ -91,7 +78,7 @@ const ResumePage: NextPage = () => {
             <span className="text-faint">.</span>
           </motion.h1>
           <motion.p {...entrance(0.2)} className="mt-4 text-sm text-muted">
-            Two builds of the same file — pick whichever suits your reader.
+            Read it here, or take a copy with you.
           </motion.p>
 
           {/* Preview window */}
@@ -108,28 +95,13 @@ const ResumePage: NextPage = () => {
                   <span className="h-2.5 w-2.5 rounded-full bg-amber-300/70" />
                   <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
                 </div>
-                <div className="flex">
-                  {RESUME_FILES.map((file) => (
-                    <button
-                      key={file.name}
-                      onClick={() => setActive(file)}
-                      className={`whitespace-nowrap border-b-2 px-2.5 py-3 font-mono text-xs transition-colors sm:px-3 ${
-                        active.name === file.name
-                          ? "border-accent text-fg"
-                          : "border-transparent text-faint hover:text-muted"
-                      }`}
-                    >
-                      {file.name}
-                    </button>
-                  ))}
-                </div>
+                <span className="whitespace-nowrap border-b-2 border-accent px-2.5 py-3 font-mono text-xs text-fg sm:px-3">
+                  {RESUME.name}
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="mr-1.5 hidden font-mono text-xs text-faint md:block">
-                  {active.note}
-                </span>
                 <a
-                  href={active.href}
+                  href={RESUME.href}
                   target="_blank"
                   rel="noreferrer"
                   className="group hidden items-center gap-1.5 rounded border border-line px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent sm:flex"
@@ -141,8 +113,8 @@ const ResumePage: NextPage = () => {
                   </span>
                 </a>
                 <a
-                  href={active.href}
-                  download={active.download}
+                  href={RESUME.href}
+                  download={RESUME.download}
                   className="group my-2 flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded border border-line px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:border-accent/40 hover:text-accent"
                 >
                   download
@@ -154,19 +126,17 @@ const ResumePage: NextPage = () => {
               {/* m-auto centers the page when it's shorter than the pane
                   (mobile) without clipping the top when it's taller */}
               <a
-                href={active.href}
+                href={RESUME.href}
                 target="_blank"
                 rel="noreferrer"
                 title="open in new tab"
                 className="m-auto block w-full"
               >
-                {/* key restarts the cross-fade when the tab changes */}
                 <Image
-                  key={active.preview.src}
-                  src={active.preview.src}
-                  width={active.preview.width}
-                  height={active.preview.height}
-                  alt={`resume preview — ${active.name}`}
+                  src={RESUME.preview.src}
+                  width={RESUME.preview.width}
+                  height={RESUME.preview.height}
+                  alt="resume preview"
                   sizes="(max-width: 896px) 100vw, 824px"
                   priority
                   className="media-fade h-auto w-full ring-1 ring-line"
@@ -177,9 +147,9 @@ const ResumePage: NextPage = () => {
 
           <motion.div {...entrance(0.4)} className="mt-8 font-mono text-xs leading-relaxed">
             <p className="text-muted">
-              <span className="text-accent">$</span> diff full.pdf simple.pdf
+              <span className="text-accent">$</span> lp resume.pdf
             </p>
-            <p className="text-faint"># same person, fewer colors</p>
+            <p className="text-faint"># prints clean on any machine</p>
           </motion.div>
         </div>
       </main>
