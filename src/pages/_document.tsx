@@ -4,12 +4,16 @@ export default function Document() {
   return (
     <Html lang="en" className="bg-ink">
       <Head>
+        {/* "signature" mark — Fraunces italic e + terminal cursor
+            (regenerate with scripts/make-favicon.mjs) */}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link
-          type="image/png"
-          sizes="96x96"
           rel="icon"
-          href="icons8-pokeball-96.png"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32.png"
         />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta property="og:title" content="edmundlzen.dev" />
         <meta property="og:description" content="Edmund's personal website" />
         <meta property="og:type" content="website" />
