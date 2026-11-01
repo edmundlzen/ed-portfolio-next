@@ -22,7 +22,7 @@ const GREETINGS = [
 const EMAIL = "edmundlzen@gmail.com";
 const GITHUB_URL = "https://github.com/edmundlzen";
 
-// The fancy build (/resume/Edmund_Resume.pdf) still exists in public/ but is
+// The fancy build (/resume/Edmund_Resume_old.pdf) still exists in public/ but is
 // intentionally not linked anywhere for now.
 const RESUME_URL = "/resume/Edmund_Resume_Simple.pdf";
 

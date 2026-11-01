@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-// The fancy build (Edmund_Resume.pdf + preview/full-1.webp) still lives in
+// The fancy build (Edmund_Resume_old.pdf + preview/full-1.webp) still lives in
 // public/resume/ but is intentionally not linked anywhere for now.
 const RESUME = {
   name: "resume.pdf",

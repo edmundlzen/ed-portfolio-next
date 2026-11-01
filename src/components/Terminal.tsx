@@ -8,7 +8,7 @@ interface TermLine {
 }
 
 const EMAIL = "edmundlzen@gmail.com";
-// The fancy build (/resume/Edmund_Resume.pdf) still exists in public/ but is
+// The fancy build (/resume/Edmund_Resume_old.pdf) still exists in public/ but is
 // intentionally not surfaced here for now.
 const RESUME_SIMPLE = "/resume/Edmund_Resume_Simple.pdf";
 

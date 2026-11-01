@@ -14,7 +14,7 @@ const OUT = path.join(ROOT, "public", "resume", "preview");
 await mkdir(OUT, { recursive: true });
 
 const FILES = [
-  { slug: "full", filename: "Edmund_Resume.pdf" },
+  { slug: "full", filename: "Edmund_Resume_old.pdf" },
   { slug: "simple", filename: "Edmund_Resume_Simple.pdf" },
 ];
 
