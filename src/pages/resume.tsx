@@ -12,7 +12,7 @@ const RESUME = {
   download: "Edmund_Resume_Simple.pdf",
   // Pre-rendered with PDFium (scratchpad render-pdfium.mjs) — the PDF plugin
   // rasterizes on every scroll frame and lags badly.
-  preview: { src: "/resume/preview/simple-1.webp", width: 1190, height: 1684 },
+  preview: { src: "/resume/preview/simple-1.webp", width: 1188, height: 1682 },
 };
 
 const entrance = (delay: number) => ({
